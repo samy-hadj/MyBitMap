@@ -298,53 +298,53 @@ namespace MyBitMap
             byte[] createdFile = new byte[sizeFile];
 
             //.bmp type
-            header[0] = 66; // B
-            header[1] = 77; // M
+            createdFile[0] = 66; // B
+            createdFile[1] = 77; // M
 
             temp = Convertir_Int_To_Endian(sizeFile);
-            for (int i = 0; i <= 3; i++)
+            for (int i = 0; i < 4; i++)
             {
-                header[2 + i] = temp[i];
+                createdFile[2 + i] = temp[i];
             }
 
-            for (int i = 0; i <= 3; i++)
+            for (int i = 0; i < 4; i++)
             {
-                header[6 + i] = 0;
+                createdFile[6 + i] = 0;
             }
 
-            header[10] = 54;
+            createdFile[10] = 54;
 
-            for (int i = 0; i <= 2; i++)
+            for (int i = 0; i < 3; i++)
             {
-                header[11 + i] = 0;
+                createdFile[11 + i] = 0;
             }
 
-            header[14] = 40;
+            createdFile[14] = 40;
 
-            for (int i = 0; i <= 2; i++)
+            for (int i = 0; i < 3; i++)
             {
-                header[15 + i] = 0;
+                createdFile[15 + i] = 0;
             }
 
             temp = Convertir_Int_To_Endian(width);
-            for (int i = 0; i <= 3; i++)
+            for (int i = 0; i < 4; i++)
             {
-                header[18 + i] = temp[i];
+                createdFile[18 + i] = temp[i];
             }
 
             temp = Convertir_Int_To_Endian(height);
-            for (int i = 0; i <= 3; i++)
+            for (int i = 0; i < 4; i++)
             {
-                header[22 + i] = temp[i];
+                createdFile[22 + i] = temp[i];
             }
 
-            header[26] = 1;
-            header[27] = 0;
-            header[28] = 24;
+            createdFile[26] = 1;
+            createdFile[27] = 0;
+            createdFile[28] = 24;
 
-            for (int i = 0; i <= 24; i++)
+            for (int i = 0; i < 24; i++)
             {
-                header[29 + i] = 0;
+                createdFile[29 + i] = 0;
             }
 
             return createdFile;

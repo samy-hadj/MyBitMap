@@ -195,7 +195,7 @@ namespace MyBitMap
 
             if (pictureNumber == 0)
             {
-                Environment.Exit(0); // Si on ne veut pas aller jusqu'au bout
+                Environment.Exit(0);
             }
             else if (pictureNumber == 1)
             {
@@ -205,44 +205,33 @@ namespace MyBitMap
             {
                 image.imageProcessService.BinarizePicture();
             }
-            // else if (pictureNumber == 3)
-            // {
-            //     image.miroir();
-            // }
             else if (pictureNumber == 4)
             {
                 image.imageProcessService.rotation();
             }
             else if (pictureNumber == 5)
             {
-                image.imageProcessService.agrandir();
+                image.imageProcessService.moreBigPicture();
             }
-            // else if (pictureNumber == 6)
-            // {
-            //     image.imageProcessService.retrecir();
-            // }
             else if (pictureNumber == 7)
             {
                 Console.Clear();
-                image.imageProcessService.filtre("contour");
+                image.imageProcessService.filter("contour");
             }
             else if (pictureNumber == 8)
             {
                 Console.Clear();
-                image.imageProcessService.filtre("renforcement");
-                // image.miroirContenu();
+                image.imageProcessService.filter("renforcement");
             }
             else if (pictureNumber == 9)
             {
                 Console.Clear();
-                image.imageProcessService.filtre("flou");
-                // Console.Clear();
-                // image.dissimulerImage();
+                image.imageProcessService.filter("flou");
             }
             else if (pictureNumber == 10)
             {
                 Console.Clear();
-                image.imageProcessService.filtre("repoussage");
+                image.imageProcessService.filter("repoussage");
             }
         }
 
@@ -252,21 +241,15 @@ namespace MyBitMap
                 "------------- TD1-2... -------------\n" +
                 "\n1. Appliquer une nuance de gris" +
                 "\n2. Appliquer un filtre noir et blanc\n" +
-                // "\n3. Effectuer une image miroir\n" +
                 "------------- TD3... -------------\n" +
                 "\n4. Effectuer une rotation" +
                 "\n5. Agrandir l'image avec un coéfficient quelconque (entier)\n" +
-                // "\n6. Rétrecir l'image avec un coéfficient quelconque (entier)\n" +
                 "------------- TD4... -------------\n" +
-                // "\n7. Appliquer un filtre personnalisé" +
                 "\n7. Appliquer la détection de contour" +
-                // "\n8. Détection de contour +" +
-                // "\n3. Détection de contour ++" +
                 "\n8. Appliquer le renforcement des bords de l'image" +
                 "\n9. Appliquer un flou sur l'image" +
                 "\n10. Appliquer un repoussage sur l'image" +
-                // "\n8. Effectuer un miroir du contenu de l'image" +
-                // "\n9. Insérer une image dans une autre image" +
+    
                 "\n\n0. Quitter\n");
         }
 

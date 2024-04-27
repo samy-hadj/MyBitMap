@@ -10,7 +10,6 @@ namespace MyBitMap
 {
     public class ImageProcessService
     {
-        // * ATTRIBUTS *
         private MyImage _myImage;
 
         public ImageProcessService(MyImage myImage)
@@ -58,8 +57,7 @@ namespace MyBitMap
         }
         
         /// <summary>
-        /// Applique une rotation de 90° de 1 à 3 fois en fonction de ce qui est demandé
-        /// Si la rotation demandé est de 180° le header sera identique à celui de l'image avant rotation
+        /// Demande à l'utilisateur de choisir un angle de rotation (90, 180 ou 270°) et effectue la rotation de l'image en conséquence.
         /// </summary>
         public void rotation()
         {
@@ -110,118 +108,131 @@ namespace MyBitMap
             }
         }
 
-
+        /// <summary>
+        /// Effectue une rotation de 90° de l'image en créant une matrice temporaire de la même taille que l'image mais en inversant les dimensions.
+        /// </summary>
         private void rotation90()
         {
             Pixel[,] imageTemporaire = new Pixel[_myImage.width, _myImage.height];
-            for (int row = 0; row < _myImage.height; row++)
+            int row = 0;
+            while (row < _myImage.height)
             {
-                for (int column = 0; column < _myImage.width; column++)
+                int column = 0;
+                while (column < _myImage.width)
                 {
                     imageTemporaire[column, _myImage.image.GetLength(0) - 1 - row] = _myImage.image[row, column];
+                    column++;
                 }
+                row++;
             }
             _myImage.image = imageTemporaire;
         }
         
         /// <summary>
-        /// Créer une matrice temporaire plus grande en multipliant ses dimensions par x, remplit les cases vides à chaque index (grande image) par l'index/x (de l'image réel) ce qui reviendra à reprendre le même pixel plusieurs fois.
-        /// L'image étant plus grande le tableau de byte devra être agrandi en conséquence. De plus, la width et height dans le header devront être modifiées.
+        /// Demande à l'utilisateur de choisir un facteur d'agrandissement et effectue l'agrandissement de l'image en conséquence.
         /// </summary>
-        public void agrandir()
+        public void moreBigPicture()
         {
             int multiple = 0;
-            bool possible;
-            do
+            bool possible = false;
+
+            while (!possible)
             {
-                possible = true;
                 Console.Write("Par combien voulez vous agrandir votre image : ");
-                try { multiple = Convert.ToInt32(Console.ReadLine()); }
-                catch { Console.Write("\nVeuillez entrer un entier\n"); possible = false; }
-            } while (possible == false);
-            
-            Pixel[,] imageGrande = new Pixel[_myImage.height * multiple, _myImage.width * multiple];
-            for (int row = 0; row < imageGrande.GetLength(0); row++)
-            {
-                for (int column = 0; column < imageGrande.GetLength(1); column++)
+                try
                 {
-                    imageGrande[row, column] = _myImage.image[row / multiple, column / multiple];
+                    multiple = Convert.ToInt32(Console.ReadLine());
+                    possible = true;
+                }
+                catch
+                {
+                    Console.Write("\nVeuillez entrer un entier\n");
                 }
             }
-            _myImage.image = imageGrande;
+
+            Pixel[,] bigPicture = new Pixel[_myImage.height * multiple, _myImage.width * multiple];
+
+            int row = 0;
+            while (row < bigPicture.GetLength(0))
+            {
+                int column = 0;
+                while (column < bigPicture.GetLength(1))
+                {
+                    bigPicture[row, column] = _myImage.image[row / multiple, column / multiple];
+                    column++;
+                }
+                row++;
+            }
+
+            _myImage.image = bigPicture;
             _myImage.CreateNewImage(3, multiple); // width et height à modifier dans le header + tableau byte plus grand
         }
 
-        // * FILTRE *
-
         /// <summary>
-        /// Définit la matrice de convolution en fonction du filtre demandé, par ailleurs si on veut appliquer un filtre flou il faudra alors effectuer une division par 9 qui sera effectuer dans la méthode convolution
+        /// Applique le filtre choisis à l'image parmis ces filtres : contour, renforcement, flou, repoussage.
         /// </summary>
-        public void filtre(String filter)    
+        /// <param name="filter"></param>
+        public void filter(String filter)    
         {
             int[,] convolution = null;
-            bool estFlou = false;
+            bool isFlue = false;
 
-            switch (filter) // On definit la matrice de convolution en fonction du filtre demandé 
+            if (filter == "contour")
             {
-                case "contour":
-                    int[,] contour1 = { { 1, 0, -1 }, { 0, 0, 0 }, { -1, 0, 1 } };
-                    convolution = contour1;
-                    break;
-                // case 2:
-                //     int[,] contour2 = { { 0, 1, 0 }, { 1, -4, 1 }, { 0, 1, 0 } };
-                //     convolution = contour2;
-                //     break;
-                // case 3:
-                //     int[,] contour3 = { { -1, -1, -1 }, { -1, 8, -1 }, { -1, -1, -1 } };
-                //     convolution = contour3;
-                //     break;
-                case "renforcement":
-                    int[,] renforcement = { { 0, -1, 0 }, { -1, 5, -1 }, { 0, -1, 0 } };
-                    convolution = renforcement;
-                    break;
-                case "flou":
-                    int[,] flou = { { 1 , 1, 1}, { 1 , 1 , 1}, { 1 , 1, 1} };
-                    convolution = flou;
-                    estFlou = true;
-                    break;
-                case "repoussage":
-                    int[,] repoussage = { { -2, -1, 0 }, { -1, 1, 1 }, { 0, 1, 2 } };
-                    convolution = repoussage;
-                    break;
+            //  int[,] contour1 = { { 1, 0, -1 }, { 0, 0, 0 }, { -1, 0, 1 } };
+                int[,] contour2 = { { 0, 1, 0 }, { 1, -4, 1 }, { 0, 1, 0 } };
+            //  int[,] contour3 = { { -1, -1, -1 }, { -1, 8, -1 }, { -1, -1, -1 } };
+                convolution = contour2;
             }
-            Convolution(convolution, estFlou);
+            else if (filter == "renforcement")
+            {
+                int[,] renforcement = { { 0, -1, 0 }, { -1, 5, -1 }, { 0, -1, 0 } };
+                convolution = renforcement;
+            }
+            else if (filter == "flou")
+            {
+                int[,] flou = { { 1 , 1, 1}, { 1 , 1 , 1}, { 1 , 1, 1} };
+                convolution = flou;
+                isFlue = true;
+            }
+            else if (filter == "repoussage")
+            {
+                int[,] repoussage = { { -2, -1, 0 }, { -1, 1, 1 }, { 0, 1, 2 } };
+                convolution = repoussage;
+            }
+
+            convolutionMatrix(convolution, isFlue);
         }
 
         /// <summary>
-        /// Effectue le calcul permettant d'obtenir les nouvelles valeurs des couleurs bleues, vertes et rouges en appliquant la matrice de convolution à l'image. 
-        /// Pour appliquer la matrice de convolution à notre image, il faut accepter de sacrifier les pixels sur les extrémités ce qui va modifier les dimensions de l'image et par conséquent la taille du tableau de bits.
-        /// Pour y remédier, les bords vide sont remplit par les pixels du nouveau bord.
+        /// Applique la matrice de convolution sur l'image pour appliquer un filtre.
         /// </summary>
-        /// <param name="convolution"> matrice de convolution défini dans la méthode "filtre" en fonction de l'attente de l'usager </param>
-        /// <param name="flou"> Si on veut appliquer un flou alors le bool sera "true" </param>
-        private void Convolution(int[,] convolution, bool flou)
+        /// <param name="convolution"> Matrice de convolution à appliquer sur l'image </param>
+        /// <param name="isFlou"> Flag pour savoir si on applique un flou ou non </param>
+        private void convolutionMatrix(int[,] convolution, bool isFlou)
         {
             Pixel[,] imageTemporaire = new Pixel[_myImage.height, _myImage.width];
-            for (int i = 1; i < _myImage.height - 1; i ++)
+            int i = 1;
+            while (i < _myImage.height - 1)
             {
-                for (int j = 1; j < _myImage.width - 1; j++)
+                int j = 1;
+                while (j < _myImage.width - 1)
                 {
                     int valueBlue = _myImage.image[i - 1, j - 1].Blue * convolution[0, 0] + _myImage.image[i - 1, j].Blue * convolution[0, 1] + _myImage.image[i - 1, j + 1].Blue * convolution[0, 2] +
                                     _myImage.image[i, j - 1].Blue * convolution[1, 0] + _myImage.image[i, j].Blue * convolution[1, 1] + _myImage.image[i, j + 1].Blue * convolution[1, 2] +
                                     _myImage.image[i + 1, j - 1].Blue * convolution[2, 0] + _myImage.image[i + 1, j].Blue * convolution[2, 1] + _myImage.image[i + 1, j + 1].Blue * convolution[2, 2];
-                    
+
 
                     int valueGreen = _myImage.image[i - 1, j - 1].Green * convolution[0, 0] + _myImage.image[i - 1, j].Green * convolution[0, 1] + _myImage.image[i - 1, j + 1].Green * convolution[0, 2] +
-                                     _myImage.image[i, j - 1].Green * convolution[1, 0] + _myImage.image[i, j].Green * convolution[1, 1] + _myImage.image[i, j + 1].Green * convolution[1, 2] +
-                                     _myImage.image[i + 1, j - 1].Green * convolution[2, 0] + _myImage.image[i + 1, j].Green * convolution[2, 1] + _myImage.image[i + 1, j + 1].Green * convolution[2, 2];
-                    
+                                    _myImage.image[i, j - 1].Green * convolution[1, 0] + _myImage.image[i, j].Green * convolution[1, 1] + _myImage.image[i, j + 1].Green * convolution[1, 2] +
+                                    _myImage.image[i + 1, j - 1].Green * convolution[2, 0] + _myImage.image[i + 1, j].Green * convolution[2, 1] + _myImage.image[i + 1, j + 1].Green * convolution[2, 2];
 
-                    int valueRed =  _myImage.image[i - 1, j - 1].Red * convolution[0, 0] + _myImage.image[i - 1, j].Red * convolution[0, 1] + _myImage.image[i - 1, j + 1].Red * convolution[0, 2] +
+
+                    int valueRed = _myImage.image[i - 1, j - 1].Red * convolution[0, 0] + _myImage.image[i - 1, j].Red * convolution[0, 1] + _myImage.image[i - 1, j + 1].Red * convolution[0, 2] +
                                     _myImage.image[i, j - 1].Red * convolution[1, 0] + _myImage.image[i, j].Red * convolution[1, 1] + _myImage.image[i, j + 1].Red * convolution[1, 2] +
                                     _myImage.image[i + 1, j - 1].Red * convolution[2, 0] + _myImage.image[i + 1, j].Red * convolution[2, 1] + _myImage.image[i + 1, j + 1].Red * convolution[2, 2];
 
-                    if(flou)
+                    if (isFlou)
                     {
                         valueBlue = valueBlue / 9;
                         valueGreen = valueGreen / 9;
@@ -238,7 +249,9 @@ namespace MyBitMap
                     if (valueRed > 255) { valueRed = 255; }
 
                     imageTemporaire[i, j] = new Pixel(valueBlue, valueGreen, valueRed);
+                    j++;
                 }
+                i++;
             }
 
             imageTemporaire[0, 0] = imageTemporaire[1, 1]; // coin supérieur gauche
@@ -246,16 +259,20 @@ namespace MyBitMap
             imageTemporaire[_myImage.height - 1, 0] = imageTemporaire[_myImage.height - 2, 1]; // coin inférieur gauche
             imageTemporaire[_myImage.height - 1, _myImage.width - 1] = imageTemporaire[_myImage.height - 2, _myImage.width - 2]; // coin inférieur droit
 
-            for (int row = 1; row < _myImage.height - 1; row++) 
+            int row = 1;
+            while (row < _myImage.height - 1)
             {
                 imageTemporaire[row, 0] = imageTemporaire[row, 1]; // bord gauche
                 imageTemporaire[row, _myImage.width - 1] = imageTemporaire[row, _myImage.width - 2]; // bord droit
+                row++;
             }
 
-            for (int column = 1; column < _myImage.width - 1; column++)
+            int column = 1;
+            while (column < _myImage.width - 1)
             {
                 imageTemporaire[0, column] = imageTemporaire[1, column]; // bord supérieur
                 imageTemporaire[_myImage.height - 1, column] = imageTemporaire[_myImage.height - 2, column]; // inférieur
+                column++;
             }
 
             _myImage.image = imageTemporaire;
@@ -263,56 +280,59 @@ namespace MyBitMap
         }
 
         /// <summary>
-        /// Convertit un entier en un octet (tableau d'entier de dimension 8)
+        /// Permets de convertir un entier en tableau d'entier de dimension 8
+        /// Chaque élément du tableau correspond à un bit de l'entier
         /// </summary>
-        /// <param name="nombre"> nombre à convertir </param>
+        /// <param name="number"> number à convertir </param>
         /// <returns> tableau d'entier de dimension 8 </returns>
-        public int[] Convertir_Int_ToByte(int nombre)
+        public int[] Convertir_Int_ToByte(int number)
         {
-            int reste;
-            int[] octet = new int [8];
+            int rest;
+            int[] octet = new int[8];
+
             int i = 0;
-            while(nombre != 0 && i < 8)
+            while (number != 0 && i < 8)
             {
-                if (nombre == 0)
+                if (number == 0)
                 {
                     octet[i] = 0;
                 }
-                reste = nombre % 2;
-                octet[i] = reste;
-                nombre = (nombre - reste) / 2;
-                i++;
+                rest = number % 2;
+                octet[i] = rest;
+                number = (number - rest) / 2;
+
+                i+=1;
             }
             return octet;
         }
 
         /// <summary>
-        /// Convertit un octet (tableau d'entier de dimension 8) en un entier
+        /// Permets de convertir un octet en entier
+        /// Chaque élément du tableau correspond à un bit de l'entier
         /// </summary>
         /// <param name="octet"> octet à convertir en entier </param>
         /// <returns> retourne un entier </returns>
         public int Convertir_Byte_ToInt(int[] octet)
         {
-            int nombre = 0;
+            int number = 0;
             for (int i = 0; i < 8; i++)
             {
-                nombre += Convert.ToInt32(octet[i] * Math.Pow(2, i));
+                number += octet[i] * (int)Math.Pow(2, i);
+                i++;
             }
-            return nombre;
+            return number;
         }
 
-        // Fractale de Mandelbrot
-
         /// <summary>
-        /// Dessine la fractale de Mandelbrot en noir et bleue
+        /// Applique l'algorithme de Mandelbrot pour générer une fractale
         /// </summary>
         public void fractale()
         {
-            // L'ensemble de Mandelbrot est toujours compris entre -2.1 et 0.6 sur l'axe des abscisse et entre -1.2 et 1.2 sur l'axe des ordonnées.
-            double x1 = -2.1; // limite gauche
-            double x2 = 0.6; // limite droite
-            double y1 = -1.2; // limite hausse
-            double y2 = 1.2; // limite basse
+            // Toujours situé entre -2.1 et 0.6 sur l'axe des abscisses et entre -1.2 et 1.2 sur l'axe des ordonnées, l'ensemble de Mandelbrot...
+            double x1 = -2.1;
+            double x2 = 0.6;
+            double y1 = -1.2;
+            double y2 = 1.2;
             int zoom = 100;
             int iterationMax = 50;
 
@@ -323,24 +343,25 @@ namespace MyBitMap
 
             Pixel[,] fractale = new Pixel[imageX, imageY];
 
-            for (int x = 0; x < imageX; x++)
+            int x = 0;
+            while (x < imageX)
             {
-                for (int y = 0; y < imageY; y++)
+                int y = 0;
+                while (y < imageY)
                 {
                     double c_r = (x / zoom) + x1;
                     double c_i = (y / zoom) + y1;
-                    double z_r = 0; // partie réelle
-                    double z_i = 0; // partie imaginaire
+                    double z_r = 0;
+                    double z_i = 0;
                     int i = 0;
 
-                    do
+                    while ((z_r * z_r + z_i * z_i) < 4 && i < iterationMax)
                     {
                         double temporaire = z_r;
                         z_r = z_r * z_r - z_i * z_i + c_r;
                         z_i = 2 * z_i * temporaire + c_i;
                         i++;
                     }
-                    while ((z_r * z_r + z_i * z_i) < 4 && i < iterationMax); // évite de calculer le module de z (appliquer des racines), donc on compare à 4 au lieu de 2
 
                     if (i == iterationMax)
                     {
@@ -350,11 +371,12 @@ namespace MyBitMap
                     {
                         fractale[x, y] = new Pixel(0, 0, (i * 255) / iterationMax);
                     }
+                    y++;
                 }
+                x++;
             }
-
             _myImage.image = fractale;
-            _myImage.CreateNewImage(5); // Tout le header est à faire
+            _myImage.CreateNewImage(5); // Creer l'image entierement
         }
     }
 }
