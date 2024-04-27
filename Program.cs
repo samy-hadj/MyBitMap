@@ -15,7 +15,7 @@ namespace MyBitMap
         /// Sert aussi à obtenir un aperçu de l'image sélectionnée.
         /// </summary>
         /// <returns>Un string qui représente le nom du fichier afin de récupérer ses caractéristiques.</returns>
-        static string Selection()
+        static string Run()
         {
             Console.WriteLine("Choisissez une image ou déposez-en une à la racine du projet et entrez son nom\n" +
                 "\n0. Testez votre fichier personnel" +
@@ -76,9 +76,9 @@ namespace MyBitMap
         static string ChooseFile()
         {
             string filename = null;
-            byte[] existence = null;
+            byte[] exist = null;
 
-            while (existence == null)
+            while (exist == null)
             {
                 Console.Write("Entrer le nom du fichier : ");
                 string fichier = Console.ReadLine();
@@ -86,11 +86,11 @@ namespace MyBitMap
 
                 try
                 {
-                    existence = File.ReadAllBytes(filename);
+                    exist = File.ReadAllBytes(filename);
                 }
                 catch
                 {
-                    Console.WriteLine("Saisissez un nom d'image existant.");
+                    Console.WriteLine("L'image que vous avez saisis n'existe pas.");
                 }
             }
 
@@ -100,22 +100,22 @@ namespace MyBitMap
         /// <summary>
         /// Ouvre l'image spécifiée par le nom du fichier.
         /// </summary>
-        /// <param name="filename">Le nom du fichier image à ouvrir.</param>
+        /// <param name="filename">Le nom du fichier image à openPicture.</param>
         static void OpenImage(string filename)
         {
             if (!string.IsNullOrEmpty(filename))
             {
                 Console.WriteLine("\n\nVoulez-vous ouvrir cette image ?\n1. Oui\n2. Non\n");
 
-                int ouvrir = -1;
-                while (ouvrir != 1 && ouvrir != 2)
+                int openPicture = -1;
+                while (openPicture != 1 && openPicture != 2)
                 {
                     Console.Write("> ");
                     string input = Console.ReadLine();
 
-                    if (int.TryParse(input, out ouvrir))
+                    if (int.TryParse(input, out openPicture))
                     {
-                        if (ouvrir != 1 && ouvrir != 2)
+                        if (openPicture != 1 && openPicture != 2)
                         {
                             Console.Write("Entrez un numéro valide\n");
                         }
@@ -126,7 +126,7 @@ namespace MyBitMap
                     }
                 }
 
-                if (ouvrir == 1)
+                if (openPicture == 1)
                 {
                     string path = Path.GetFullPath(filename);
                     Console.WriteLine("Ouverture de l'image... : " + path);
@@ -142,98 +142,124 @@ namespace MyBitMap
         }
 
         /// <summary>
-        /// Donne la possibilité d'afficher les propriétés de l'image.
+        /// Cette fontiononne permet d'afficher les propriétés de l'image.
         /// </summary>
-        /// <param name="image"> La classe de l'image dont on veut afficher les propriétés </param>
-        static void Parametre(MyImage image)
+        /// <param name="image"> La classe avec laquelle l'image selectionée à été instanciée </param>
+        static void DisplayDataPicture(MyImage image)
         {
-            Console.WriteLine("\n\nVoulez afficher les caracteristiques de " + image.Nom + " ?\n1. Oui\n2. Non\n");
-            int afficher = -1;
-            do
+            Console.WriteLine("\n\nSelectionner une option pour " 
+            + image.Nom 
+            + " ?\n1. Afficher les détails de l'image\n2. Passer cette étape\n");
+            int display;
+            
+            while (!int.TryParse(Console.ReadLine(), out display) || (display != 2 && display != 1 ))
             {
-                Console.Write("> ");
-                try { afficher = Convert.ToInt32(Console.ReadLine()); }
-                catch { Console.Write("Entrez un numéro valide\n"); }
-            } while (afficher != 1 && afficher != 2);
+                Console.Write("Entrez un numéro valide\n");
+            }
 
-            Console.Clear();
-            if (afficher == 1)
+            // Console.Clear();
+            
+            switch (display)
             {
-                Console.WriteLine("Caractéristique de " + image.Nom + "\n");
-                Console.WriteLine("Format : " + image.TypeImage + "\nTaille : " + image.TailleFichier + " bits\nTaille de l'Offset : " + image.TailleOffset + "\nLargeur : " + image.Largeur + " pixels\nHauteur : " + image.Hauteur + " pixels\n\n");
-                Console.ReadKey();
+                case 1:
+                    Console.WriteLine("Caractéristique de " + image.Nom + "\n");
+                    Console.WriteLine($"Format : {image.TypeImage}\nTaille : {image.TailleFichier} bits\nTaille de l'Offset : {image.TailleOffset}\nLargeur : {image.Largeur} pixels\nHauteur : {image.Hauteur} pixels\n\n");
+                    Console.WriteLine("Appuyez sur une touche pour passer au traitement d'image !");
+                    Console.ReadKey();
+                    break;
             }
         }
 
+
         /// <summary>
-        /// Affiche les différents traitements appliquable à l'image et laisse le choix à l'utilisateur
+        /// Gere le traitement d'image, differentes options sont disponibles pour l'utilisateur
         /// </summary>
         /// <param name="image"> La classe de l'image sur laquelle on veut effectuer les traitements d'images </param>
-        static void Traitement(MyImage image)
+        static void ProcessPicture(MyImage image)
         {
             int pictureNumber = -1;
-            Console.WriteLine("Quelle opération voulez vous effectuer sur " + image.Nom +" :\n" +
-                "\n1. Nuance de gris" +
-                "\n2. Noir et blanc +" +
-                "\n3. Image miroir" +
-                "\n4. Rotation" +
-                "\n5. Agrandir" +
-                "\n6. Rétrécir" +
-                "\n7. Appliquer un filtre" +
-                "\n8. Miroir contenu" +
-                "\n9. Insérer une image dans une autre" +
-                "\n\n0. Sortir\n");
-            do
+            DisplayOptionPicture(image.Nom);
+            for (; ; )
             {
                 Console.Write("> ");
                 try { pictureNumber = Convert.ToInt32(Console.ReadLine()); }
                 catch { Console.Write("Entrez un numéro valide\n"); }
-            } while (pictureNumber != 0 && pictureNumber != 1 && pictureNumber != 2 && pictureNumber != 3 && pictureNumber != 4 && pictureNumber != 5 && pictureNumber != 6 && pictureNumber != 7 && pictureNumber != 8 && pictureNumber != 9);
 
-            switch (pictureNumber)
-            {
-                case 0:
-                    Environment.Exit(0); // Si on ne veut pas aller jusqu'au bout
+                if (pictureNumber == 0)
                     break;
-                case 1:
-                    image.enGris();
-                    break;
-                case 2:
-                    image.NetB();
-                    break;
-                case 3:
-                    image.miroir();
-                    break;
-                case 4:
-                    image.rotation();
-                    break;
-                case 5:
-                    image.agrandir();
-                    break;
-                case 6:
-                    image.retrecir();
-                    break;
-                case 7:
-                    Console.Clear();
-                    image.filtre();
-                    break;
-                case 8:
-                    image.miroirContenu();
-                    break;
-                case 9:
-                    Console.Clear();
-                    image.dissimulerImage();
+                if (pictureNumber >= 1 && pictureNumber <= 9)
                     break;
             }
+
+            if (pictureNumber == 0)
+            {
+                Environment.Exit(0); // Si on ne veut pas aller jusqu'au bout
+            }
+            else if (pictureNumber == 1)
+            {
+                image.enGris();
+            }
+            else if (pictureNumber == 2)
+            {
+                image.NetB();
+            }
+            else if (pictureNumber == 3)
+            {
+                image.miroir();
+            }
+            else if (pictureNumber == 4)
+            {
+                image.rotation();
+            }
+            else if (pictureNumber == 5)
+            {
+                image.agrandir();
+            }
+            else if (pictureNumber == 6)
+            {
+                image.retrecir();
+            }
+            else if (pictureNumber == 7)
+            {
+                Console.Clear();
+                image.filtre();
+            }
+            else if (pictureNumber == 8)
+            {
+                image.miroirContenu();
+            }
+            else if (pictureNumber == 9)
+            {
+                Console.Clear();
+                image.dissimulerImage();
+            }
+        }
+
+        static void DisplayOptionPicture(String imageName)
+        {
+            Console.WriteLine("\nQuelle opération voulez-vous effectuer sur " + imageName + " :\n" +
+                "------------- TD1-2... -------------\n" +
+                "\n1. Appliquer une nuance de gris" +
+                "\n2. Appliquer un filtre noir et blanc" +
+                "\n3. Effectuer une image miroir\n" +
+                "------------- TD3... -------------\n" +
+                "\n4. Effectuer une rotation" +
+                "\n5. Agrandir l'image avec un coéfficient quelconque\n" +
+                "\n6. Rétrecir l'image avec un coéfficient quelconque\n" +
+                "------------- TD4... -------------\n" +
+                "\n7. Appliquer un filtre personnalisé" +
+                "\n8. Effectuer un miroir du contenu de l'image" +
+                "\n9. Insérer une image dans une autre image" +
+                "\n\n0. Quitter\n");
         }
 
         static void Main(string[] args)
         {
-            MyImage image = new MyImage(Selection());
-            Parametre(image);
-            Traitement(image);
-
-            Console.ReadKey();
+            MyImage picture = new MyImage(Run());
+            DisplayDataPicture(picture);
+            ProcessPicture(picture);
+            Console.WriteLine("\n\nL'image a été traitée avec succès !\n\n" 
+            + "Vous la trouverez à la racine du projet sous le nom de nouvel_image.bmp");
         }
     }
 }
