@@ -1,0 +1,230 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>MyBitMap</name>
+    </assembly>
+    <members>
+        <member name="M:MyBitMap.ImageProcessService.grayScalePicture">
+            <summary>
+            Traitez chaque pixel de la matrice en appliquant la méthode de classe pour appliquer la nuance de gris
+            </summary>
+        </member>
+        <member name="M:MyBitMap.ImageProcessService.BinarizePicture">
+            <summary>
+            Traitez chaque pixel de la matrice en appliquant la méthode de classe pour appliquer la binarisation de l'image (noir ou blanc)
+            </summary>
+        </member>
+        <member name="M:MyBitMap.ImageProcessService.rotation">
+            <summary>
+            Demande à l'utilisateur de choisir un angle de rotation (90, 180 ou 270°) et effectue la rotation de l'image en conséquence.
+            </summary>
+        </member>
+        <member name="M:MyBitMap.ImageProcessService.rotation90">
+            <summary>
+            Effectue une rotation de 90° de l'image en créant une matrice temporaire de la même taille que l'image mais en inversant les dimensions.
+            </summary>
+        </member>
+        <member name="M:MyBitMap.ImageProcessService.moreBigPicture">
+            <summary>
+            Demande à l'utilisateur de choisir un facteur d'agrandissement et effectue l'agrandissement de l'image en conséquence.
+            </summary>
+        </member>
+        <member name="M:MyBitMap.ImageProcessService.filter(System.String)">
+            <summary>
+            Applique le filtre choisis à l'image parmis ces filtres : contour, renforcement, flou, repoussage.
+            </summary>
+            <param name="filter"></param>
+        </member>
+        <member name="M:MyBitMap.ImageProcessService.convolutionMatrix(System.Int32[0:,0:],System.Boolean)">
+            <summary>
+            Applique la matrice de convolution sur l'image pour appliquer un filtre.
+            </summary>
+            <param name="convolution"> Matrice de convolution à appliquer sur l'image </param>
+            <param name="isFlou"> Flag pour savoir si on applique un flou ou non </param>
+        </member>
+        <member name="M:MyBitMap.ImageProcessService.Convertir_Int_ToByte(System.Int32)">
+            <summary>
+            Permets de convertir un entier en tableau d'entier de dimension 8
+            Chaque élément du tableau correspond à un bit de l'entier
+            </summary>
+            <param name="number"> number à convertir </param>
+            <returns> tableau d'entier de dimension 8 </returns>
+        </member>
+        <member name="M:MyBitMap.ImageProcessService.Convertir_Byte_ToInt(System.Int32[])">
+            <summary>
+            Permets de convertir un octet en entier
+            Chaque élément du tableau correspond à un bit de l'entier
+            </summary>
+            <param name="octet"> octet à convertir en entier </param>
+            <returns> retourne un entier </returns>
+        </member>
+        <member name="M:MyBitMap.ImageProcessService.fractale">
+            <summary>
+            Applique l'algorithme de Mandelbrot pour générer une fractale
+            </summary>
+        </member>
+        <member name="M:MyBitMap.ImageProcessService.ChooseFile">
+            <summary>
+            Permet à l'utilisateur de choisir un fichier image en saisissant son nom.
+            </summary>
+            <returns>Le nom du fichier sélectionné.</returns>
+        </member>
+        <member name="M:MyBitMap.ImageProcessService.addSecondImage">
+            <summary>
+            Permet à l'utilisateur de choisir une image à dissimuler dans l'image actuelle.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MyBitMap.ImageProcessService.steganography">
+            <summary>
+            Coder et Décoder une image dans une image (stéganographie) 
+            </summary>
+        </member>
+        <member name="M:MyBitMap.MyImage.#ctor(System.String)">
+            <summary>
+            Extrait les informations de l'image, bit par bit, et les stocke dans le tableau myfile.
+            Ensuite, parcourt ce tableau pour récupérer les attributs.
+            </summary>
+            <param name="filename"> A partir du filename on récupère l'image </param>
+        </member>
+        <member name="M:MyBitMap.MyImage.#ctor">
+            <summary>
+            Consutructeur vide (pour les fractales)
+            </summary>
+        </member>
+        <member name="M:MyBitMap.MyImage.GetHeader">
+            <summary>
+            Récupère les 54 premiers bits du fichier pour les stocker dans le header.
+            </summary>
+        </member>
+        <member name="M:MyBitMap.MyImage.GetTypeImage">
+            <summary>
+            Récupère le type de l'image.
+            </summary>
+        </member>
+        <member name="M:MyBitMap.MyImage.GetSizeFile">
+            <summary>
+            Récupère la taille du fichier.
+            </summary>
+        </member>
+        <member name="M:MyBitMap.MyImage.GetInformationsImage">
+            <summary>
+            Récupère les informations de l'image.
+            </summary>
+        </member>
+        <member name="M:MyBitMap.MyImage.getImageMatrix">
+            <summary>
+            Récupère les pixels de l'image.
+            </summary>
+        </member>
+        <member name="M:MyBitMap.MyImage.From_Image_To_File(System.String)">
+            <summary>
+            Convertit l'image en tableau de byte
+            </summary>
+            <param name="filename"> Nom de l'image </param>
+            <example> From_Image_To_File("image.bmp") </example>
+        </member>
+        <member name="M:MyBitMap.MyImage.Convertir_Endian_To_Int(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Convertit le tableau de byte en image
+            </summary>
+            <param name="nbOctet"> Nombre d'octet à convertir </param>
+            <param name="fin"> Index de fin de la conversion </param>
+            <param name="valeur"> Valeur de l'octet converti </param>
+            <example> Convertir_Endian_To_Int(4) </example>
+        </member>
+        <member name="M:MyBitMap.MyImage.Convertir_Int_To_Endian(System.Int32)">
+            <summary>
+            Convertit un entier en endian
+            </summary>
+            <param name="nombre"> Nombre à convertir en "endian" </param>
+            <example> Convertir_Int_To_Endian(5) </example>
+        </member>
+        <member name="M:MyBitMap.MyImage.CreateNewImage(System.Int32,System.Int32)">
+            <summary>
+            Commence par ajuster le header en fonction du traitement effectué.
+            Ensuite, remplit entièrement le nouveau tableau de bytes en copiant d'abord les 54 premiers bits du header, puis les valeurs de bleu, vert et rouge pour le reste du tableau.
+            Enfin, écrit, crée et affiche l'image.
+            </summary>
+            <param name="operation">Opération à effectuer sur le header en fonction du traitement.</param>
+            <param name="multiple">Facteur d'agrandissement ou de rétrécissement de l'image.</param>
+        </member>
+        <member name="M:MyBitMap.MyImage.CreateFileSimple">
+            <summary>
+            Crée un fichier image simple.
+            </summary>
+        </member>
+        <member name="M:MyBitMap.MyImage.CreateFileRotation90or270(System.Byte[])">
+            <summary>
+            Crée un fichier image en rotation de 90 ou 270 degrés.
+            </summary>
+            <param name="temp"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyBitMap.MyImage.CreateFileMoreBig(System.Int32,System.Byte[])">
+            <summary>
+            Crée un fichier image plus grand.
+            </summary>
+            <param name="multiple"></param>
+            <param name="temp"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyBitMap.MyImage.CreateFileFractale(System.Byte[])">
+            <summary>
+            Crée un fichier image fractale.
+            </summary>
+            <param name="temp"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyBitMap.MyImage.CopyHeaderAndImageIntoFile(System.Byte[])">
+            <summary>
+            Copie le header et l'image dans le fichier.
+            </summary>
+            <param name="createdFile"></param>
+        </member>
+        <member name="M:MyBitMap.MyImage.GetNameNewImage">
+            <summary>
+            Demande à l'utilisateur s'il veut donner un nom à l'image.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MyBitMap.MyImage.SaveAndOpenFile(System.Byte[],System.String)">
+            <summary>
+            Enregistre et ouvre le fichier.
+            </summary>
+            <param name="createdFile"></param>
+            <param name="nom"></param>
+        </member>
+        <member name="M:MyBitMap.Program.Run">
+            <summary>
+            Cette méthode permet à l'utilisateur de choisir une image parmi celles disponibles ou d'en spécifier une en saisissant son nom
+            Sert aussi à obtenir un aperçu de l'image sélectionnée.
+            </summary>
+            <returns>Un string qui représente le nom du fichier afin de récupérer ses caractéristiques.</returns>
+        </member>
+        <member name="M:MyBitMap.Program.ChooseFile">
+            <summary>
+            Permet à l'utilisateur de choisir un fichier image en saisissant son nom.
+            </summary>
+            <returns>Le nom du fichier sélectionné.</returns>
+        </member>
+        <member name="M:MyBitMap.Program.OpenImage(System.String)">
+            <summary>
+            Ouvre l'image spécifiée par le nom du fichier.
+            </summary>
+            <param name="filename">Le nom du fichier image à openPicture.</param>
+        </member>
+        <member name="M:MyBitMap.Program.DisplayDataPicture(MyBitMap.MyImage)">
+            <summary>
+            Cette fontiononne permet d'afficher les propriétés de l'image.
+            </summary>
+            <param name="image"> La classe avec laquelle l'image selectionée à été instanciée </param>
+        </member>
+        <member name="M:MyBitMap.Program.ProcessPicture(MyBitMap.MyImage)">
+            <summary>
+            Gere le traitement d'image, differentes options sont disponibles pour l'utilisateur
+            </summary>
+            <param name="image"> La classe de l'image sur laquelle on veut effectuer les traitements d'images </param>
+        </member>
+    </members>
+</doc>

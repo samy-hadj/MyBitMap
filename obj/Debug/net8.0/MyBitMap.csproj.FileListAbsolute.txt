@@ -37,3 +37,5 @@ C:\Users\Samy\Desktop\projetBitmap\repoGit\MyBitMap\obj\Debug\net8.0\refint\MyBi
 C:\Users\Samy\Desktop\projetBitmap\repoGit\MyBitMap\obj\Debug\net8.0\MyBitMap.pdb
 C:\Users\Samy\Desktop\projetBitmap\repoGit\MyBitMap\obj\Debug\net8.0\MyBitMap.genruntimeconfig.cache
 C:\Users\Samy\Desktop\projetBitmap\repoGit\MyBitMap\obj\Debug\net8.0\ref\MyBitMap.dll
+C:\Users\Samy\Desktop\projetBitmap\repoGit\MyBitMap\bin\Debug\net8.0\MyBitMap.xml
+C:\Users\Samy\Desktop\projetBitmap\repoGit\MyBitMap\obj\Debug\net8.0\MyBitMap.xml

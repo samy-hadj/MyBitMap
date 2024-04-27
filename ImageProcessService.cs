@@ -546,5 +546,9 @@ namespace MyBitMap
             _myImage.image = imageTemporaire;
             _myImage.CreateNewImage(0);
         }
+
+
+        //Implémentation des algorithmes de compression QuadTree ou Huffman
+        
     }
 }
