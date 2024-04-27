@@ -383,8 +383,8 @@ namespace MyBitMap
         private string GetNameNewImage()
         {
             Console.WriteLine("Voulez-vous donner un nom à votre image ? (oui/non)");
-            string reponse = Console.ReadLine();
-            if (reponse == "oui")
+            string res = Console.ReadLine();
+            if (res == "oui")
             {
                 Console.Write("Nom de l'image : ");
                 return Console.ReadLine() + ".bmp";
