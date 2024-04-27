@@ -6,79 +6,61 @@ using System.Threading.Tasks;
 
 namespace MyBitMap
 {
-    class Pixel
+    public class Pixel
     {
-        // Attributs
-
-        int blue;
-        int green;
         int red;
+        int green;
+        int blue;
 
-
-        // Constructeurs
-
-        public Pixel(int B, int G, int R)
+        public Pixel(int Blue, int Green, int Red)
         {
-            if (R >= 0 && R < 256 && B >= 0 && B < 256 && G >= 0 && G < 256)
+            if (Red >= 0 && Red < 256 && Blue >= 0 && Blue < 256 && Green >= 0 && Green < 256)
             {
-                blue = B;
-                green = G;
-                red = R;
+                blue = Blue;
+                green = Green;
+                red = Red;
             }
         }
-
-        public Pixel(Pixel pixel)
-        {
-            blue = pixel.Blue;
-            green = pixel.Green;
-            red = pixel.Red;
-        }
-
-
-        // Accesseurs
                 
-        public int Blue
+        public int Red
         {
-            get { return blue; }
-            set { blue = value; }
+            set { red = value; }
+            get { return red; }
         }
         public int Green
         {
-            get { return green; }
             set { green = value; }
+            get { return green; }
         }
-        public int Red
+        public int Blue
         {
-            get { return red; }
-            set { red = value; }
-        }
-
-
-        // Méthodes
-
-
-        public void nuanceGris()
-        {
-            int gris = (this.red + this.blue + this.green) / 3;
-            this.red = gris;
-            this.blue = gris;
-            this.green = gris;
+            set { blue = value; }
+            get { return blue; }
         }
 
-        public void NoirEtBlanc()
+        public void GrayScale()
         {
-            int gris = (this.red + this.blue + this.green) / 3;
-            if (gris <= 128)
+            int averageColor = (red + green + blue) / 3;
+            red = averageColor;
+            green = averageColor;
+            blue = averageColor;
+        }
+
+        public void BinarizeColor()
+        {
+            int color = (this.red + this.blue + this.green) / 3;
+            switch (color)
             {
-                this.red = 0;
-                this.blue = 0;
-                this.green = 0;
-            }
-            else
-            {
-                this.red = 255;
-                this.blue = 255;
-                this.green = 255;
+                case int n when (n <= 128):
+                    this.red = 0;
+                    this.green = 0;
+                    this.blue = 0;
+                    break;
+                case int n when (n >= 128):
+                    this.red = 255;
+                    this.green = 255;
+                    this.blue = 255;
+                    break;
             }
         }
     }
