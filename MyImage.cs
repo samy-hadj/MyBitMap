@@ -24,85 +24,7 @@ namespace MyBitMap
         public Pixel[,] image; // matrix of pixels
         public ImageProcessService imageProcessService;
 
-
-        /// <summary>
-        /// Extrait les informations de l'image, bit par bit, et les stocke dans le tableau myfile.
-        /// Ensuite, parcourt ce tableau pour récupérer les attributs.
-        /// </summary>
-        /// <param name="filename"> A partir du filename on récupère l'image </param>
-        public MyImage(string filename)
-        {
-            imageProcessService = new ImageProcessService(this);
-            From_Image_To_File(filename);
-            nom = filename;
-
-            // Récupérer le header : i : 0 à 53
-
-            for (int i = 0; i < 54; i++)
-            {
-                header[i] = myfile[i];
-            }
-
-            // typeImage : i = 0 et 1
-            for (offset = 0; offset < 2; offset++)
-            {
-                if (myfile[offset] == 65) { typeImage += "A"; }
-                if (myfile[offset] == 66) { typeImage += "B"; }
-                if (myfile[offset] == 67) { typeImage += "C"; }
-                if (myfile[offset] == 73) { typeImage += "I"; }
-                if (myfile[offset] == 77) { typeImage += "M"; }
-                if (myfile[offset] == 80) { typeImage += "P"; }
-                if (myfile[offset] == 84) { typeImage += "T"; }
-            }
-
-            // tailleFichier : i = 2 à 5
-            offset = 2;
-            tailleFichier = Convertir_Endian_To_Int(4);
-
-
-                // INFORMATIONS CONCERNANT L'IMAGE
-
-            // taille offset : i = 14 à 17
-            offset = 14;
-            tailleOffset = Convertir_Endian_To_Int(4);
-
-            // largeur : i = 18 et 21
-            offset = 18;
-            largeur = Convertir_Endian_To_Int(4);
-
-            // hauteur : i = 22 et 25
-            offset = 22;
-            hauteur = Convertir_Endian_To_Int(4);
-
-            // nb_Bit_Couleur : i = 28 et 29
-            offset = 28;
-            nb_Bit_Couleur = Convertir_Endian_To_Int(2);
-            
-
-            // RECUPERER IMAGE -> transformation en matrice de pixels
-            
-            offset = 54;
-            image = new Pixel[hauteur, largeur];
-
-            for (int i = 0; i < hauteur; i++)
-            {
-                for (int j = 0; j < largeur; j++)
-                {
-                    image[i, j] = new Pixel(myfile[offset], myfile[offset + 1], myfile[offset + 2]);
-                    offset += 3;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Consutructeur vide (pour les fractales)
-        /// </summary>
-        public MyImage()
-        {
-            imageProcessService = new ImageProcessService(this);
-        }
-
-        public string Nom
+                public string Nom
         {
             get { return nom; }
         }
@@ -137,12 +59,109 @@ namespace MyBitMap
             get { return nb_Bit_Couleur; }
         }
 
-        /// <summary>
-        /// Matrice de pixel
-        /// </summary>
         public Pixel[,] Mat_Pixel
         {
             get { return image; }
+        }
+
+
+        /// <summary>
+        /// Extrait les informations de l'image, bit par bit, et les stocke dans le tableau myfile.
+        /// Ensuite, parcourt ce tableau pour récupérer les attributs.
+        /// </summary>
+        /// <param name="filename"> A partir du filename on récupère l'image </param>
+        public MyImage(string filename)
+        {
+            imageProcessService = new ImageProcessService(this);
+            From_Image_To_File(filename);
+            nom = filename;
+            GetHeader();
+            GetTypeImage();
+            GetSizeFile();
+            GetInformationsImage();
+            getImageMatrix();
+        }
+
+        /// <summary>
+        /// Consutructeur vide (pour les fractales)
+        /// </summary>
+        public MyImage()
+        {
+            imageProcessService = new ImageProcessService(this);
+        }
+
+        /// <summary>
+        /// Récupère les 54 premiers bits du fichier pour les stocker dans le header.
+        /// </summary>
+        private void GetHeader()
+        {
+            for (int i = 0; i < 54; i++)
+            {
+                header[i] = myfile[i];
+            }
+        }
+
+        /// <summary>
+        /// Récupère le type de l'image.
+        /// </summary>
+        private void GetTypeImage()
+        {
+            for (offset = 0; offset < 2; offset++)
+            {
+                if (myfile[offset] == 65) { typeImage += "A"; }
+                if (myfile[offset] == 66) { typeImage += "B"; }
+                if (myfile[offset] == 67) { typeImage += "C"; }
+                if (myfile[offset] == 73) { typeImage += "I"; }
+                if (myfile[offset] == 77) { typeImage += "M"; }
+                if (myfile[offset] == 80) { typeImage += "P"; }
+                if (myfile[offset] == 84) { typeImage += "T"; }
+            }
+        }
+
+        /// <summary>
+        /// Récupère la taille du fichier.
+        /// </summary>
+        private void GetSizeFile()
+        {
+            offset = 2;
+            tailleFichier = Convertir_Endian_To_Int(4);
+        }
+
+        /// <summary>
+        /// Récupère les informations de l'image.
+        /// </summary>
+        private void GetInformationsImage()
+        {
+            offset = 14;
+            tailleOffset = Convertir_Endian_To_Int(4);
+
+            offset = 18;
+            largeur = Convertir_Endian_To_Int(4);
+
+            offset = 22;
+            hauteur = Convertir_Endian_To_Int(4);
+
+            offset = 28;
+            nb_Bit_Couleur = Convertir_Endian_To_Int(2);
+        }
+
+
+        /// <summary>
+        /// Récupère les pixels de l'image.
+        /// </summary>
+        private void getImageMatrix()
+        {
+            offset = 54;
+            image = new Pixel[hauteur, largeur];
+
+            for (int i = 0; i < hauteur; i++)
+            {
+                for (int j = 0; j < largeur; j++)
+                {
+                    image[i, j] = new Pixel(myfile[offset], myfile[offset + 1], myfile[offset + 2]);
+                    offset += 3;
+                }
+            }
         }
 
         /// <summary>

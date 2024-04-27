@@ -156,13 +156,12 @@ namespace MyBitMap
             {
                 Console.Write("Entrez un numéro valide\n");
             }
-
-            // Console.Clear();
             
             switch (display)
             {
                 case 1:
                     Console.WriteLine("Caractéristique de " + image.Nom + "\n");
+                    Console.WriteLine("Type du fichier: " + image.TypeImage);
                     Console.WriteLine($"Taille du fichier: {image.TailleFichier} bits\n" +
                     $"Taille de l'Offset: {image.TailleOffset}\n" +
                     $"Largeur: {image.Largeur} pixels\n" +
