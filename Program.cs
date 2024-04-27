@@ -162,10 +162,10 @@ namespace MyBitMap
                 case 1:
                     Console.WriteLine("Caractéristique de " + image.Nom + "\n");
                     Console.WriteLine("Type du fichier: " + image.TypeImage);
-                    Console.WriteLine($"Taille du fichier: {image.TailleFichier} bits\n" +
-                    $"Taille de l'Offset: {image.TailleOffset}\n" +
-                    $"Largeur: {image.Largeur} pixels\n" +
-                    $"Hauteur: {image.Hauteur} pixels\n");
+                    Console.WriteLine($"Taille du fichier: {image.SizeFile} bits\n" +
+                    $"Taille de l'Offset: {image.OffsetSize}\n" +
+                    $"Largeur: {image.Width} pixels\n" +
+                    $"Hauteur: {image.Height} pixels\n");
                     Console.WriteLine("Appuyez sur une touche pour passer au traitement d'image !");
                     Console.ReadKey();
                     break;

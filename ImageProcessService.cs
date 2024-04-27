@@ -24,17 +24,17 @@ namespace MyBitMap
         public void grayScalePicture()
         {
             int row = 0;
-            while (row < _myImage.hauteur)
+            while (row < _myImage.height)
             {
                 int column = 0;
-                while (column < _myImage.largeur)
+                while (column < _myImage.width)
                 {
                     _myImage.image[row, column].GrayScale();
                     column++;
                 }
                 row++;
             }
-            _myImage.CreerImage(0); // Rien à modifier dans le header
+            _myImage.CreateNewImage(0); // Rien à modifier dans le header
         }
 
 
@@ -44,17 +44,17 @@ namespace MyBitMap
         public void BinarizePicture()
         {
             int row = 0;
-            while (row < _myImage.hauteur)
+            while (row < _myImage.height)
             {
                 int column = 0;
-                while (column < _myImage.largeur)
+                while (column < _myImage.width)
                 {
                     _myImage.image[row, column].BinarizeColor();
                     column++;
                 }
                 row++;
             }
-            _myImage.CreerImage(0); // Rien à modifier dans le header
+            _myImage.CreateNewImage(0); // Rien à modifier dans le header
         }
         
         /// <summary>
@@ -102,21 +102,21 @@ namespace MyBitMap
 
             if (angleDegree == 180)
             {
-                _myImage.CreerImage(0); // Rien à modifier dans le header
+                _myImage.CreateNewImage(0); // Rien à modifier dans le header
             }
             else
             {
-                _myImage.CreerImage(2); // Besoin d'intervertir la largeur et hauteur dans le header
+                _myImage.CreateNewImage(2); // Besoin d'intervertir la width et height dans le header
             }
         }
 
 
         private void rotation90()
         {
-            Pixel[,] imageTemporaire = new Pixel[_myImage.largeur, _myImage.hauteur];
-            for (int row = 0; row < _myImage.hauteur; row++)
+            Pixel[,] imageTemporaire = new Pixel[_myImage.width, _myImage.height];
+            for (int row = 0; row < _myImage.height; row++)
             {
-                for (int column = 0; column < _myImage.largeur; column++)
+                for (int column = 0; column < _myImage.width; column++)
                 {
                     imageTemporaire[column, _myImage.image.GetLength(0) - 1 - row] = _myImage.image[row, column];
                 }
@@ -126,7 +126,7 @@ namespace MyBitMap
         
         /// <summary>
         /// Créer une matrice temporaire plus grande en multipliant ses dimensions par x, remplit les cases vides à chaque index (grande image) par l'index/x (de l'image réel) ce qui reviendra à reprendre le même pixel plusieurs fois.
-        /// L'image étant plus grande le tableau de byte devra être agrandi en conséquence. De plus, la largeur et hauteur dans le header devront être modifiées.
+        /// L'image étant plus grande le tableau de byte devra être agrandi en conséquence. De plus, la width et height dans le header devront être modifiées.
         /// </summary>
         public void agrandir()
         {
@@ -140,7 +140,7 @@ namespace MyBitMap
                 catch { Console.Write("\nVeuillez entrer un entier\n"); possible = false; }
             } while (possible == false);
             
-            Pixel[,] imageGrande = new Pixel[_myImage.hauteur * multiple, _myImage.largeur * multiple];
+            Pixel[,] imageGrande = new Pixel[_myImage.height * multiple, _myImage.width * multiple];
             for (int row = 0; row < imageGrande.GetLength(0); row++)
             {
                 for (int column = 0; column < imageGrande.GetLength(1); column++)
@@ -149,7 +149,7 @@ namespace MyBitMap
                 }
             }
             _myImage.image = imageGrande;
-            _myImage.CreerImage(3, multiple); // Largeur et hauteur à modifier dans le header + tableau byte plus grand
+            _myImage.CreateNewImage(3, multiple); // width et height à modifier dans le header + tableau byte plus grand
         }
 
         // * FILTRE *
@@ -202,10 +202,10 @@ namespace MyBitMap
         /// <param name="flou"> Si on veut appliquer un flou alors le bool sera "true" </param>
         private void Convolution(int[,] convolution, bool flou)
         {
-            Pixel[,] imageTemporaire = new Pixel[_myImage.hauteur, _myImage.largeur];
-            for (int i = 1; i < _myImage.hauteur - 1; i ++)
+            Pixel[,] imageTemporaire = new Pixel[_myImage.height, _myImage.width];
+            for (int i = 1; i < _myImage.height - 1; i ++)
             {
-                for (int j = 1; j < _myImage.largeur - 1; j++)
+                for (int j = 1; j < _myImage.width - 1; j++)
                 {
                     int valueBlue = _myImage.image[i - 1, j - 1].Blue * convolution[0, 0] + _myImage.image[i - 1, j].Blue * convolution[0, 1] + _myImage.image[i - 1, j + 1].Blue * convolution[0, 2] +
                                     _myImage.image[i, j - 1].Blue * convolution[1, 0] + _myImage.image[i, j].Blue * convolution[1, 1] + _myImage.image[i, j + 1].Blue * convolution[1, 2] +
@@ -242,24 +242,24 @@ namespace MyBitMap
             }
 
             imageTemporaire[0, 0] = imageTemporaire[1, 1]; // coin supérieur gauche
-            imageTemporaire[0, _myImage.largeur - 1] = imageTemporaire[1, _myImage.largeur - 2]; // coin supérieur droit
-            imageTemporaire[_myImage.hauteur - 1, 0] = imageTemporaire[_myImage.hauteur - 2, 1]; // coin inférieur gauche
-            imageTemporaire[_myImage.hauteur - 1, _myImage.largeur - 1] = imageTemporaire[_myImage.hauteur - 2, _myImage.largeur - 2]; // coin inférieur droit
+            imageTemporaire[0, _myImage.width - 1] = imageTemporaire[1, _myImage.width - 2]; // coin supérieur droit
+            imageTemporaire[_myImage.height - 1, 0] = imageTemporaire[_myImage.height - 2, 1]; // coin inférieur gauche
+            imageTemporaire[_myImage.height - 1, _myImage.width - 1] = imageTemporaire[_myImage.height - 2, _myImage.width - 2]; // coin inférieur droit
 
-            for (int row = 1; row < _myImage.hauteur - 1; row++) 
+            for (int row = 1; row < _myImage.height - 1; row++) 
             {
                 imageTemporaire[row, 0] = imageTemporaire[row, 1]; // bord gauche
-                imageTemporaire[row, _myImage.largeur - 1] = imageTemporaire[row, _myImage.largeur - 2]; // bord droit
+                imageTemporaire[row, _myImage.width - 1] = imageTemporaire[row, _myImage.width - 2]; // bord droit
             }
 
-            for (int column = 1; column < _myImage.largeur - 1; column++)
+            for (int column = 1; column < _myImage.width - 1; column++)
             {
                 imageTemporaire[0, column] = imageTemporaire[1, column]; // bord supérieur
-                imageTemporaire[_myImage.hauteur - 1, column] = imageTemporaire[_myImage.hauteur - 2, column]; // inférieur
+                imageTemporaire[_myImage.height - 1, column] = imageTemporaire[_myImage.height - 2, column]; // inférieur
             }
 
             _myImage.image = imageTemporaire;
-            _myImage.CreerImage(0); // Rien à modifier dans le header
+            _myImage.CreateNewImage(0); // Rien à modifier dans le header
         }
 
         /// <summary>
@@ -317,9 +317,9 @@ namespace MyBitMap
             int iterationMax = 50;
 
             int imageX = Convert.ToInt32((x2 - x1) * zoom);
-            _myImage.largeur = imageX;
+            _myImage.width = imageX;
             int imageY = Convert.ToInt32((y2 - y1) * zoom);
-            _myImage.hauteur = imageY;
+            _myImage.height = imageY;
 
             Pixel[,] fractale = new Pixel[imageX, imageY];
 
@@ -354,7 +354,7 @@ namespace MyBitMap
             }
 
             _myImage.image = fractale;
-            _myImage.CreerImage(5); // Tout le header est à faire
+            _myImage.CreateNewImage(5); // Tout le header est à faire
         }
     }
 }

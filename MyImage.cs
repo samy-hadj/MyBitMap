@@ -12,10 +12,10 @@ namespace MyBitMap
     {
         public string nom; // name of the image
         public string typeImage; // type of picture
-        public int tailleFichier; // file size
-        public int tailleOffset; // offset size
-        public int largeur; // width
-        public int hauteur; // height
+        public int sizeFile; // file size
+        public int offsetSize; // offset size
+        public int width; // width
+        public int height; // height
         public int nb_Bit_Couleur; //number of bits per pixel
         public int offset; // index
         public byte[] header = new byte[54]; // header content
@@ -34,24 +34,24 @@ namespace MyBitMap
             get { return typeImage; }
         }
 
-        public int TailleFichier
+        public int SizeFile
         {
-            get { return tailleFichier; }
+            get { return sizeFile; }
         }
 
-        public int TailleOffset
+        public int OffsetSize
         {
-            get { return tailleOffset; }
+            get { return offsetSize; }
         }
 
-        public int Largeur
+        public int Width
         {
-            get { return largeur; }
+            get { return width; }
         }
 
-        public int Hauteur
+        public int Height
         {
-            get { return hauteur; }
+            get { return height; }
         }
 
         public int NbBitCouleurs
@@ -124,7 +124,7 @@ namespace MyBitMap
         private void GetSizeFile()
         {
             offset = 2;
-            tailleFichier = Convertir_Endian_To_Int(4);
+            sizeFile = Convertir_Endian_To_Int(4);
         }
 
         /// <summary>
@@ -133,13 +133,13 @@ namespace MyBitMap
         private void GetInformationsImage()
         {
             offset = 14;
-            tailleOffset = Convertir_Endian_To_Int(4);
+            offsetSize = Convertir_Endian_To_Int(4);
 
             offset = 18;
-            largeur = Convertir_Endian_To_Int(4);
+            width = Convertir_Endian_To_Int(4);
 
             offset = 22;
-            hauteur = Convertir_Endian_To_Int(4);
+            height = Convertir_Endian_To_Int(4);
 
             offset = 28;
             nb_Bit_Couleur = Convertir_Endian_To_Int(2);
@@ -152,11 +152,11 @@ namespace MyBitMap
         private void getImageMatrix()
         {
             offset = 54;
-            image = new Pixel[hauteur, largeur];
+            image = new Pixel[height, width];
 
-            for (int i = 0; i < hauteur; i++)
+            for (int i = 0; i < height; i++)
             {
-                for (int j = 0; j < largeur; j++)
+                for (int j = 0; j < width; j++)
                 {
                     image[i, j] = new Pixel(myfile[offset], myfile[offset + 1], myfile[offset + 2]);
                     offset += 3;
@@ -213,139 +213,196 @@ namespace MyBitMap
         /// <param name="operation">Opération à effectuer sur le header en fonction du traitement.</param>
         /// <param name="multiple">Facteur d'agrandissement ou de rétrécissement de l'image.</param>
 
-        public void CreerImage(int operation, int multiple = 0)
+        public void CreateNewImage(int operation, int multiple = 0)
         {
-            byte[] creerFile = null; // Même principe que le tableau de byte myfile
-            byte[] temporaire = new byte[4];
+            byte[] createdFile = null;
+            byte[] temp = new byte[4];
 
             switch (operation)
             {
-                case 0: // nuance gris ; noir et blanc ; rotation 180 ; convolution ; insérer image dans une autre
-                    creerFile = new byte[tailleFichier];
+                case 0:
+                    createdFile = CreateFileSimple();
                     break;
-                case 2: // Rotation 90° ou 270°
-                    creerFile = new byte[tailleFichier];
-                    for (int i = 0; i <= 3; i++)
-                    {
-                    // Permuter dans le header, la largeur et hauteur
-                        temporaire[i] = header[22 + i];
-                        header[22 + i] = header[18 + i];
-                        header[18 + i] = temporaire[i];
-                    }
+                case 2:
+                    createdFile = CreateFileRotation90or270(temp);
                     break;
-                case 3: // Agrandir
-                    creerFile = new byte[((largeur * multiple) * (hauteur * multiple) * 3) + 54]; // Multiplier par 3 pour les 3 couleurs primaires
-                    temporaire = Convertir_Int_To_Endian(largeur * multiple);
-                    for (int i = 0; i <= 3; i++)
-                    {
-                        header[18 + i] = temporaire[i];
-                    }
-                    temporaire = Convertir_Int_To_Endian(hauteur * multiple);
-                    for (int i = 0; i <= 3; i++)
-                    {
-                        header[22 + i] = temporaire[i];
-                    }
+                case 3:
+                    createdFile = CreateFileMoreBig(multiple, temp);
                     break;
-                case 4: // Rétrécir
-                    creerFile = new byte[((largeur / multiple) * (hauteur / multiple) * 3) + 54]; // Multiplier par 3 pour les 3 couleurs primaires
-                    temporaire = Convertir_Int_To_Endian(largeur / multiple);
-                    for (int i = 0; i <= 3; i++)
-                    {
-                        header[18 + i] = temporaire[i];
-                    }
-                    temporaire = Convertir_Int_To_Endian(hauteur / multiple);
-                    for (int i = 0; i <= 3; i++)
-                    {
-                        header[22 + i] = temporaire[i];
-                    }
-                    break;
-                case 5: // Fractale
-                    tailleFichier = (largeur * hauteur * 3) + 54;
-                    creerFile = new byte[tailleFichier];
-
-                    header[0] = 66; // B
-                    header[1] = 77; // M
-
-                    temporaire = Convertir_Int_To_Endian(tailleFichier);
-                    for (int i = 0; i <= 3; i++) // taille fichier
-                    {
-                        header[2 + i] = temporaire[i];
-                    }
-
-                    for (int i = 0; i <= 3; i++)
-                    {
-                        header[6 + i] = 0;
-                    }
-
-                    header[10] = 54; // taille header
-
-                    for (int i = 0; i <= 2; i++)
-                    {
-                        header[11 + i] = 0;
-                    }
-
-                    header[14] = 40; // taille offset
-
-                    for (int i = 0; i <= 2; i++)
-                    {
-                        header[15 + i] = 0; // taille offset
-                    }
-
-                    temporaire = Convertir_Int_To_Endian(largeur);
-                    for (int i = 0; i <= 3; i++)
-                    {
-                        header[18 + i] = temporaire[i]; // largeur
-                    }
-
-                    temporaire = Convertir_Int_To_Endian(hauteur);
-                    for (int i = 0; i <= 3; i++)
-                    {
-                        header[22 + i] = temporaire[i]; // hauteur
-                    }
-
-                    header[26] = 1;
-                    header[27] = 0;
-                    header[28] = 24; // nb bit par couleur + (i = 29)
-
-                    for (int i = 0; i <= 24; i++)
-                    {
-                        header[29 + i] = 0;
-                    }
+                case 5:
+                    createdFile = CreateFileFractale(temp);
                     break;
             }
 
+            CopyHeaderAndImageIntoFile(createdFile);
+
+            string nom = GetNameNewImage();
+            SaveAndOpenFile(createdFile, nom);
+        }
+
+         /// <summary>
+         /// Crée un fichier image simple.
+         /// </summary>
+        private byte[] CreateFileSimple()
+        {
+            return new byte[sizeFile];
+        }
+
+        /// <summary>
+        /// Crée un fichier image en rotation de 90 ou 270 degrés.
+        /// </summary>
+        /// <param name="temp"></param>
+        /// <returns></returns>
+        private byte[] CreateFileRotation90or270(byte[] temp)
+        {
+            byte[] createdFile = new byte[sizeFile];
+            for (int i = 0; i <= 3; i++)
+            {
+                temp[i] = header[22 + i];
+                header[22 + i] = header[18 + i];
+                header[18 + i] = temp[i];
+            }
+            return createdFile;
+        }
+
+        /// <summary>
+        /// Crée un fichier image plus grand.
+        /// </summary>
+        /// <param name="multiple"></param>
+        /// <param name="temp"></param>
+        /// <returns></returns>
+        private byte[] CreateFileMoreBig(int multiple, byte[] temp)
+        {
+            byte[] createdFile = new byte[((width * multiple) * (height * multiple) * 3) + 54];
+            temp = Convertir_Int_To_Endian(width * multiple);
+            for (int i = 0; i <= 3; i++)
+            {
+                header[18 + i] = temp[i];
+            }
+            temp = Convertir_Int_To_Endian(height * multiple);
+            for (int i = 0; i <= 3; i++)
+            {
+                header[22 + i] = temp[i];
+            }
+            return createdFile;
+        }
+
+        /// <summary>
+        /// Crée un fichier image fractale.
+        /// </summary>
+        /// <param name="temp"></param>
+        /// <returns></returns>
+        private byte[] CreateFileFractale(byte[] temp)
+        {
+            sizeFile = (width * height * 3) + 54;
+            byte[] createdFile = new byte[sizeFile];
+
+            //.bmp type
+            header[0] = 66; // B
+            header[1] = 77; // M
+
+            temp = Convertir_Int_To_Endian(sizeFile);
+            for (int i = 0; i <= 3; i++)
+            {
+                header[2 + i] = temp[i];
+            }
+
+            for (int i = 0; i <= 3; i++)
+            {
+                header[6 + i] = 0;
+            }
+
+            header[10] = 54;
+
+            for (int i = 0; i <= 2; i++)
+            {
+                header[11 + i] = 0;
+            }
+
+            header[14] = 40;
+
+            for (int i = 0; i <= 2; i++)
+            {
+                header[15 + i] = 0;
+            }
+
+            temp = Convertir_Int_To_Endian(width);
+            for (int i = 0; i <= 3; i++)
+            {
+                header[18 + i] = temp[i];
+            }
+
+            temp = Convertir_Int_To_Endian(height);
+            for (int i = 0; i <= 3; i++)
+            {
+                header[22 + i] = temp[i];
+            }
+
+            header[26] = 1;
+            header[27] = 0;
+            header[28] = 24;
+
+            for (int i = 0; i <= 24; i++)
+            {
+                header[29 + i] = 0;
+            }
+
+            return createdFile;
+        }
+
+        /// <summary>
+        /// Copie le header et l'image dans le fichier.
+        /// </summary>
+        /// <param name="createdFile"></param>
+
+        private void CopyHeaderAndImageIntoFile(byte[] createdFile)
+        {
             for (int offset = 0; offset < 54; offset++)
             {
-                creerFile[offset] = header[offset];
+                createdFile[offset] = header[offset];
             }
 
             int ajustOffset = 0;
 
-                for (int ligne = 0; ligne < image.GetLength(0); ligne++)
+            for (int ligne = 0; ligne < image.GetLength(0); ligne++)
+            {
+                for (int colonne = 0; colonne < image.GetLength(1); colonne++)
                 {
-                    for (int colonne = 0; colonne < image.GetLength(1); colonne++)
-                    {
-                        creerFile[54 + ajustOffset] = Convert.ToByte(image[ligne, colonne].Blue);
-                        creerFile[55 + ajustOffset] = Convert.ToByte(image[ligne, colonne].Green);
-                        creerFile[56 + ajustOffset] = Convert.ToByte(image[ligne, colonne].Red);
-                        ajustOffset += 3;
-                    }
+                    createdFile[54 + ajustOffset] = Convert.ToByte(image[ligne, colonne].Blue);
+                    createdFile[55 + ajustOffset] = Convert.ToByte(image[ligne, colonne].Green);
+                    createdFile[56 + ajustOffset] = Convert.ToByte(image[ligne, colonne].Red);
+                    ajustOffset += 3;
                 }
-    
+            }
+        }
+
+        /// <summary>
+        /// Demande à l'utilisateur s'il veut donner un nom à l'image.
+        /// </summary>
+        /// <returns></returns>
+        private string GetNameNewImage()
+        {
             Console.WriteLine("Voulez-vous donner un nom à votre image ? (oui/non)");
             string reponse = Console.ReadLine();
             if (reponse == "oui")
             {
                 Console.Write("Nom de l'image : ");
-                nom = Console.ReadLine() + ".bmp";
+                return Console.ReadLine() + ".bmp";
             }
             else
             {
-                nom = "nouvel_image" + ".bmp";
+                return "nouvel_image" + ".bmp";
             }
+        }
 
-            File.WriteAllBytes(nom,creerFile);
-            // string path = nom + ".bmp";
+        /// <summary>
+        /// Enregistre et ouvre le fichier.
+        /// </summary>
+        /// <param name="createdFile"></param>
+        /// <param name="nom"></param>
+        private void SaveAndOpenFile(byte[] createdFile, string nom)
+        {
+            File.WriteAllBytes(nom, createdFile);
             ProcessStartInfo psi = new ProcessStartInfo
             {
                 FileName = nom,
