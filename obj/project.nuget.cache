@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "Bb6VVcVHbiYYPu6zOrMFQW6Vw4MYQGJ4uHc6ah4FpNmKfD2RaCyKhxRUeLSX4/0P7cc1CEX0VMY3jl6TqdSPZg==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\Samy\\Desktop\\projetBitmap\\repoGit\\MyBitMap\\MyBitMap.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Samy\\.nuget\\packages\\microsoft.win32.systemevents\\8.0.0\\microsoft.win32.systemevents.8.0.0.nupkg.sha512",
+    "C:\\Users\\Samy\\.nuget\\packages\\system.drawing.common\\8.0.4\\system.drawing.common.8.0.4.nupkg.sha512"
+  ],
+  "logs": []
+}
