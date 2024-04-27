@@ -21,9 +21,8 @@ namespace MyBitMap
                 "\n0. Testez votre fichier personnel" +
                 "\n1. Jamel" +
                 "\n2. Test" +
-                 "\n\n------------- TD5... -------------\n" +
-                "\n3. Dessiner la fractale de Mandelbrot\n"+
-                "\n4. Dessiner la steganography\n");
+                "\n\n------------- TD5... -------------\n" +
+                "\n3. Dessiner la fractale de Mandelbrot\n");
 
             int pictureNumber = -1;
             string filename = null;
@@ -197,7 +196,7 @@ namespace MyBitMap
 
                 if (pictureNumber == 0)
                     break;
-                if (pictureNumber >= 1 && pictureNumber <= 10)
+                if (pictureNumber >= 1 && pictureNumber <= 9)
                     break;
             }
 
@@ -213,33 +212,38 @@ namespace MyBitMap
             {
                 image.imageProcessService.BinarizePicture();
             }
-            else if (pictureNumber == 4)
+            else if (pictureNumber == 3)
             {
                 image.imageProcessService.rotation();
             }
-            else if (pictureNumber == 5)
+            else if (pictureNumber == 4)
             {
                 image.imageProcessService.moreBigPicture();
             }
-            else if (pictureNumber == 7)
+            else if (pictureNumber == 5)
             {
                 Console.Clear();
                 image.imageProcessService.filter("contour");
             }
-            else if (pictureNumber == 8)
+            else if (pictureNumber == 6)
             {
                 Console.Clear();
                 image.imageProcessService.filter("renforcement");
             }
-            else if (pictureNumber == 9)
+            else if (pictureNumber == 7)
             {
                 Console.Clear();
                 image.imageProcessService.filter("flou");
             }
-            else if (pictureNumber == 10)
+            else if (pictureNumber == 8)
             {
                 Console.Clear();
                 image.imageProcessService.filter("repoussage");
+            }
+            else if (pictureNumber == 9)
+            {
+                Console.Clear();
+                image.imageProcessService.steganography();
             }
         }
 
@@ -250,13 +254,17 @@ namespace MyBitMap
                 "\n1. Appliquer une nuance de gris" +
                 "\n2. Appliquer un filtre noir et blanc\n" +
                 "------------- TD3... -------------\n" +
-                "\n4. Effectuer une rotation" +
-                "\n5. Agrandir l'image avec un coéfficient quelconque (entier)\n" +
+                "\n3. Effectuer une rotation" +
+                "\n4. Agrandir l'image avec un coéfficient quelconque (entier)\n" +
                 "------------- TD4... -------------\n" +
-                "\n7. Appliquer la détection de contour" +
-                "\n8. Appliquer le renforcement des bords de l'image" +
-                "\n9. Appliquer un flou sur l'image" +
-                "\n10. Appliquer un repoussage sur l'image" +
+                "\n5. Appliquer la détection de contour" +
+                "\n6. Appliquer le renforcement des bords de l'image" +
+                "\n7. Appliquer un flou sur l'image" +
+                "\n8. Appliquer un repoussage sur l'image" +
+                "\n------------- TD5... -------------\n" +
+                "\n9. Dessiner la steganography\n" + 
+                "------------- TD6-7... -------------\n" +
+                "\n      STARFOULLAH JPP\n" + 
     
                 "\n\n0. Quitter\n");
         }

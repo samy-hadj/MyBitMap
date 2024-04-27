@@ -379,53 +379,172 @@ namespace MyBitMap
             _myImage.CreateNewImage(5); // Creer l'image entierement
         }
 
-        //Coder et Décoder une image dans une image (stéganographie) 
+        /// <summary>
+        /// Permet à l'utilisateur de choisir un fichier image en saisissant son nom.
+        /// </summary>
+        /// <returns>Le nom du fichier sélectionné.</returns>
+        static string ChooseFile()
+        {
+            string filename = null;
+            byte[] exist = null;
+
+            while (exist == null)
+            {
+                Console.Write("Entrer le nom du fichier : ");
+                string fichier = Console.ReadLine();
+                filename = fichier + ".bmp";
+
+                try
+                {
+                    exist = File.ReadAllBytes(filename);
+                }
+                catch
+                {
+                    Console.WriteLine("L'image que vous avez saisis n'existe pas.");
+                }
+            }
+
+            return filename;
+        }
+
+        /// <summary>
+        /// Permet à l'utilisateur de choisir une image à dissimuler dans l'image actuelle.
+        /// </summary>
+        /// <returns></returns>
+        private string addSecondImage()
+        {
+            Console.WriteLine("Choisissez une image à dissimuler qui soit plus petite que celle que vous aviez sélectionner\n" +
+                "\n0. Enter un nom de fichier" +
+                "\n1. Jamel" +
+                "\n2. Test");
+
+            int pictureNumber = -1;
+            string filename = null;
+
+            while (pictureNumber != 0 && pictureNumber != 1 && pictureNumber != 2 && pictureNumber != 3 && pictureNumber != 4 && pictureNumber != 5)
+            {
+                Console.Write("> ");
+                string input = Console.ReadLine();
+
+                if (int.TryParse(input, out pictureNumber))
+                {
+                    if (pictureNumber == 0)
+                    {
+                        filename = ChooseFile();
+                    }
+                    else if (pictureNumber == 1)
+                    {
+                        filename = "jamel.bmp";
+                    }
+                    else if (pictureNumber == 2)
+                    {
+                        filename = "test.bmp";
+                    }
+                    else
+                    {
+                        Console.WriteLine("Votre numéro est invalide\n");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Votre numéro est invalide\n");
+                }
+            }
+            return filename;
+        }
+
+        /// <summary>
+        /// Coder et Décoder une image dans une image (stéganographie) 
+        /// </summary>
         public void steganography()
         {
-            string pathImageToHide =  @"C:\Users\Samy\Desktop\projetBitmap\repoGit\MyBitMap\jamel.bmp";
-            MyImage imageToHide = new MyImage(pathImageToHide);
+            Pixel[,] imageTemporaire = new Pixel[_myImage.Height, _myImage.Width];
+            MyImage aDissimuler = null;
 
-            string pathImageBackground = @"C:\Users\Samy\Desktop\projetBitmap\repoGit\MyBitMap\test.bmp";
-            MyImage imageBackground = new MyImage(pathImageBackground);
+            while (true)
+            {
+                aDissimuler = new MyImage(addSecondImage());
+                if (aDissimuler.Height <= _myImage.Height && aDissimuler.Width <= _myImage.Width)
+                    break;
+                Console.WriteLine("L'image sélectionnée est plus grande que l'image principale. Sélectionnez une image plus petite.");
+            }
 
-            int width = imageToHide.width;
-            int height = imageToHide.height;
+            Pixel[,] image2 = aDissimuler.Mat_Pixel;
 
-            Pixel[,] imageSteganography = new Pixel[width, height];
+            int fixHeight = (_myImage.Height - aDissimuler.Height) / 2;
+            int fixWidth = (_myImage.Width - aDissimuler.Width) / 2;
 
             int row = 0;
-            while (row < height)
+            int column = 0;
+
+            while (row < _myImage.Height)
             {
-                int column = 0;
-                while (column < width)
+                column = 0;
+                while (column < _myImage.Width)
                 {
-                    int[] blue = Convertir_Int_ToByte(imageToHide.image[row, column].Blue);
-                    int[] green = Convertir_Int_ToByte(imageToHide.image[row, column].Green);
-                    int[] red = Convertir_Int_ToByte(imageToHide.image[row, column].Red);
-
-                    int[] blueBackground = Convertir_Int_ToByte(imageBackground.image[row, column].Blue);
-                    int[] greenBackground = Convertir_Int_ToByte(imageBackground.image[row, column].Green);
-                    int[] redBackground = Convertir_Int_ToByte(imageBackground.image[row, column].Red);
-
-                    int[] blueSteganography = new int[8];
-                    int[] greenSteganography = new int[8];
-                    int[] redSteganography = new int[8];
-
-                    for (int i = 0; i < 8; i++)
+                    if (row >= fixHeight && row < (_myImage.Height - fixHeight) && column >= fixWidth && column < (_myImage.Width - fixWidth))
                     {
-                        blueSteganography[i] = blueBackground[i] & 0xFE | blue[i];
-                        greenSteganography[i] = greenBackground[i] & 0xFE | green[i];
-                        redSteganography[i] = redBackground[i] & 0xFE | red[i];
-                    }
+                        int[] binaire1_Blue = Convertir_Int_ToByte(_myImage.image[row, column].Blue);
+                        int[] binaire2_Blue = Convertir_Int_ToByte(image2[row - fixHeight, column - fixWidth].Blue);
+                        int[] newBinary_Blue = new int[8];
+                        for (int i = 0; i < 8; i++)
+                        {
+                            if (i <= 3)
+                            {
+                                newBinary_Blue[i] = binaire2_Blue[4 + i];
+                            }
+                            else
+                            {
+                                newBinary_Blue[i] = binaire1_Blue[i];
+                            }
+                        }
+                        int valueBlue = Convert.ToInt32(Convertir_Byte_ToInt(newBinary_Blue));
 
-                    imageSteganography[row, column] = new Pixel(Convertir_Byte_ToInt(blueSteganography), Convertir_Byte_ToInt(greenSteganography), Convertir_Byte_ToInt(redSteganography));
+                        int[] binaire1_Green = Convertir_Int_ToByte(_myImage.image[row, column].Green);
+                        int[] binaire2_Green = Convertir_Int_ToByte(image2[row - fixHeight, column - fixWidth].Green);
+                        int[] newBinary_Green = new int[8];
+                        for (int i = 0; i < 8; i++)
+                        {
+                            if (i <= 3)
+                            {
+                                newBinary_Green[i] = binaire2_Green[4 + i];
+                            }
+                            else
+                            {
+                                newBinary_Green[i] = binaire1_Green[i];
+                            }
+                        }
+                        int valueGreen = Convert.ToInt32(Convertir_Byte_ToInt(newBinary_Green));
+
+                        int[] binaire1_Red = Convertir_Int_ToByte(_myImage.image[row, column].Red);
+                        int[] binaire2_Red = Convertir_Int_ToByte(image2[row - fixHeight, column - fixWidth].Red);
+                        int[] newBinary_Red = new int[8];
+                        for (int i = 0; i < 8; i++)
+                        {
+                            if (i <= 3)
+                            {
+                                newBinary_Red[i] = binaire2_Red[4 + i];
+                            }
+                            else
+                            {
+                                newBinary_Red[i] = binaire1_Red[i];
+                            }
+                        }
+                        int valueRed = Convertir_Byte_ToInt(newBinary_Red);
+
+                        imageTemporaire[row, column] = new Pixel(valueBlue, valueGreen, valueRed);
+                    }
+                    else
+                    {
+                        imageTemporaire[row, column] = _myImage.image[row, column];
+                    }
                     column++;
                 }
                 row++;
             }
 
-            _myImage.image = imageSteganography;
-            _myImage.CreateNewImage(0); // Rien à modifier dans le header
+            _myImage.image = imageTemporaire;
+            _myImage.CreateNewImage(0);
         }
     }
 }
