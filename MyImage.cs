@@ -84,7 +84,7 @@ namespace MyBitMap
             nb_Bit_Couleur = Convertir_Endian_To_Int(2);
             
 
-                // RECUPERER IMAGE -> transformation en matrice de pixels
+            // RECUPERER IMAGE -> transformation en matrice de pixels
             
             offset = 54;
             image = new Pixel[hauteur, largeur];
@@ -106,7 +106,6 @@ namespace MyBitMap
         {
             
         }
-
         
         // * ACCESSEUR *
 
@@ -184,6 +183,156 @@ namespace MyBitMap
             endian[2] = (byte)(((uint)nombre >> 16) & 0xFF);
             endian[3] = (byte)(((uint)nombre >> 24) & 0xFF);
             return endian;
+        }
+    
+
+        // Créer la nouvelle image
+
+        /// <summary>
+        /// Effectue dans un premier temps les modications nécessaire dans le header en fonction du traitement effectué, puis remplit entièrement le nouveau tableau de byte en reprenant le header pour les 54 premiers bits, puis les valeurs des couleurs bleue, vert et rouge pour le reste du tableau.
+        /// Finit par écrire l'image, la créer puis l'afficher.
+        /// </summary>
+        /// <param name="operation"> modification à apporter dans le header selon le traitement à effectuer </param>
+        /// <param name="multiple"> agrandissement ou rétrécissement de l'image </param>
+        public void CreerImage(int operation, int multiple = 0)
+        {
+            byte[] creerFile = null; // Même principe que le tableau de byte myfile
+            byte[] temporaire = new byte[4];
+
+            switch (operation)
+            {
+                case 0: // nuance gris ; noir et blanc ; rotation 180 ; convolution ; insérer image dans une autre
+                    creerFile = new byte[tailleFichier];
+                    break;
+                case 2: // Rotation 90° ou 270°
+                    creerFile = new byte[tailleFichier];
+                    for (int i = 0; i <= 3; i++)
+                    {
+                    // Permuter dans le header, la largeur et hauteur
+                        temporaire[i] = header[22 + i];
+                        header[22 + i] = header[18 + i];
+                        header[18 + i] = temporaire[i];
+                    }
+                    break;
+                case 3: // Agrandir
+                    creerFile = new byte[((largeur * multiple) * (hauteur * multiple) * 3) + 54]; // Multiplier par 3 pour les 3 couleurs primaires
+                    temporaire = Convertir_Int_To_Endian(largeur * multiple);
+                    for (int i = 0; i <= 3; i++)
+                    {
+                        header[18 + i] = temporaire[i];
+                    }
+                    temporaire = Convertir_Int_To_Endian(hauteur * multiple);
+                    for (int i = 0; i <= 3; i++)
+                    {
+                        header[22 + i] = temporaire[i];
+                    }
+                    break;
+                case 4: // Rétrécir
+                    creerFile = new byte[((largeur / multiple) * (hauteur / multiple) * 3) + 54]; // Multiplier par 3 pour les 3 couleurs primaires
+                    temporaire = Convertir_Int_To_Endian(largeur / multiple);
+                    for (int i = 0; i <= 3; i++)
+                    {
+                        header[18 + i] = temporaire[i];
+                    }
+                    temporaire = Convertir_Int_To_Endian(hauteur / multiple);
+                    for (int i = 0; i <= 3; i++)
+                    {
+                        header[22 + i] = temporaire[i];
+                    }
+                    break;
+                case 5: // Fractale
+                    tailleFichier = (largeur * hauteur * 3) + 54;
+                    creerFile = new byte[tailleFichier];
+
+                    header[0] = 66; // B
+                    header[1] = 77; // M
+
+                    temporaire = Convertir_Int_To_Endian(tailleFichier);
+                    for (int i = 0; i <= 3; i++) // taille fichier
+                    {
+                        header[2 + i] = temporaire[i];
+                    }
+
+                    for (int i = 0; i <= 3; i++)
+                    {
+                        header[6 + i] = 0;
+                    }
+
+                    header[10] = 54; // taille header
+
+                    for (int i = 0; i <= 2; i++)
+                    {
+                        header[11 + i] = 0;
+                    }
+
+                    header[14] = 40; // taille offset
+
+                    for (int i = 0; i <= 2; i++)
+                    {
+                        header[15 + i] = 0; // taille offset
+                    }
+
+                    temporaire = Convertir_Int_To_Endian(largeur);
+                    for (int i = 0; i <= 3; i++)
+                    {
+                        header[18 + i] = temporaire[i]; // largeur
+                    }
+
+                    temporaire = Convertir_Int_To_Endian(hauteur);
+                    for (int i = 0; i <= 3; i++)
+                    {
+                        header[22 + i] = temporaire[i]; // hauteur
+                    }
+
+                    header[26] = 1;
+                    header[27] = 0;
+                    header[28] = 24; // nb bit par couleur + (i = 29)
+
+                    for (int i = 0; i <= 24; i++)
+                    {
+                        header[29 + i] = 0;
+                    }
+                    break;
+            }
+
+            for (int offset = 0; offset < 54; offset++)
+            {
+                creerFile[offset] = header[offset];
+            }
+
+            int ajustOffset = 0;
+
+                for (int ligne = 0; ligne < image.GetLength(0); ligne++)
+                {
+                    for (int colonne = 0; colonne < image.GetLength(1); colonne++)
+                    {
+                        creerFile[54 + ajustOffset] = Convert.ToByte(image[ligne, colonne].Blue);
+                        creerFile[55 + ajustOffset] = Convert.ToByte(image[ligne, colonne].Green);
+                        creerFile[56 + ajustOffset] = Convert.ToByte(image[ligne, colonne].Red);
+                        ajustOffset += 3;
+                    }
+                }
+    
+            Console.WriteLine("Voulez-vous donner un nom à votre image ? (oui/non)");
+            string reponse = Console.ReadLine();
+            if (reponse == "oui")
+            {
+                Console.Write("Nom de l'image : ");
+                nom = Console.ReadLine() + ".bmp";
+            }
+            else
+            {
+                nom = "nouvel_image" + ".bmp";
+            }
+
+            File.WriteAllBytes(nom,creerFile);
+            // string path = nom + ".bmp";
+            ProcessStartInfo psi = new ProcessStartInfo
+            {
+                FileName = nom,
+                UseShellExecute = true
+            };
+            Process.Start(psi);
         }
     }
 }

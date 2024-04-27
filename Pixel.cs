@@ -14,11 +14,11 @@ namespace MyBitMap
 
         public Pixel(int Blue, int Green, int Red)
         {
-            if (Red >= 0 && Red < 256 && Blue >= 0 && Blue < 256 && Green >= 0 && Green < 256)
+            if (Red >= 0 && Red < 256 && Green >= 0 && Green < 256 && Blue >= 0 && Blue < 256)
             {
-                blue = Blue;
-                green = Green;
                 red = Red;
+                green = Green;
+                blue = Blue;
             }
         }
                 

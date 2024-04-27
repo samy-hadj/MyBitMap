@@ -218,10 +218,10 @@ namespace MyBitMap
             {
                 image.imageProcessService.agrandir();
             }
-            else if (pictureNumber == 6)
-            {
-                image.imageProcessService.retrecir();
-            }
+            // else if (pictureNumber == 6)
+            // {
+            //     image.imageProcessService.retrecir();
+            // }
             else if (pictureNumber == 7)
             {
                 Console.Clear();
@@ -256,8 +256,8 @@ namespace MyBitMap
                 // "\n3. Effectuer une image miroir\n" +
                 "------------- TD3... -------------\n" +
                 "\n4. Effectuer une rotation" +
-                "\n5. Agrandir l'image avec un coéfficient quelconque (entier)" +
-                "\n6. Rétrecir l'image avec un coéfficient quelconque (entier)\n" +
+                "\n5. Agrandir l'image avec un coéfficient quelconque (entier)\n" +
+                // "\n6. Rétrecir l'image avec un coéfficient quelconque (entier)\n" +
                 "------------- TD4... -------------\n" +
                 // "\n7. Appliquer un filtre personnalisé" +
                 "\n7. Appliquer la détection de contour" +
