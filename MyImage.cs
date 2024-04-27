@@ -10,31 +10,26 @@ namespace MyBitMap
 {
     public class MyImage
     {
-        // * ATTRIBUTS *
-
-        public string nom;
-        public string typeImage;
-        public int tailleFichier;
-        public int tailleOffset;
-        public int largeur;
-        public int hauteur;
-        public int nb_Bit_Couleur;
+        public string nom; // name of the image
+        public string typeImage; // type of picture
+        public int tailleFichier; // file size
+        public int tailleOffset; // offset size
+        public int largeur; // width
+        public int hauteur; // height
+        public int nb_Bit_Couleur; //number of bits per pixel
         public int offset; // index
-        public byte[] header = new byte[54];
-        public byte[] myfile; // Contient le header
+        public byte[] header = new byte[54]; // header content
+        public byte[] myfile; // header content + image content
 
-        public Pixel[,] image; // 
+        public Pixel[,] image; // matrix of pixels
         public ImageProcessService imageProcessService;
 
 
-        
-        // * CONSTRUCTEUR *
-
         /// <summary>
-        /// Récupère les informations concernant l'image bit par bit qu'elle transmet dans le tableau myfile.
-        /// Puis parcours myfile afin de récupérer les attributs
+        /// Extrait les informations de l'image, bit par bit, et les stocke dans le tableau myfile.
+        /// Ensuite, parcourt ce tableau pour récupérer les attributs.
         /// </summary>
-        /// <param name="filename"> On récupère l'image à partir de son nom </param>
+        /// <param name="filename"> A partir du filename on récupère l'image </param>
         public MyImage(string filename)
         {
             imageProcessService = new ImageProcessService(this);
@@ -100,14 +95,12 @@ namespace MyBitMap
         }
 
         /// <summary>
-        /// Vide dans le cas où on veut dessiner et donc on a rien à récupérer, tout à créer
+        /// Consutructeur vide (pour les fractales)
         /// </summary>
         public MyImage()
         {
-            
+            imageProcessService = new ImageProcessService(this);
         }
-        
-        // * ACCESSEUR *
 
         public string Nom
         {
@@ -145,36 +138,44 @@ namespace MyBitMap
         }
 
         /// <summary>
-        /// Pour dissimuler une image dans une autre il faut récupérer sa matrice de pixel
+        /// Matrice de pixel
         /// </summary>
         public Pixel[,] Mat_Pixel
         {
             get { return image; }
         }
 
-        
-        // * METHODE *
-
+        /// <summary>
+        /// Convertit l'image en tableau de byte
+        /// </summary>
+        /// <param name="filename"> Nom de l'image </param>
+        /// <example> From_Image_To_File("image.bmp") </example>
         public void From_Image_To_File(string filename)
         {
             myfile = File.ReadAllBytes(filename);
         }
 
+        /// <summary>
+        /// Convertit le tableau de byte en image
+        /// </summary>
+        /// <param name="nbOctet"> Nombre d'octet à convertir </param>
+        /// <param name="fin"> Index de fin de la conversion </param>
+        /// <param name="valeur"> Valeur de l'octet converti </param>
+        /// <example> Convertir_Endian_To_Int(4) </example>
         public int Convertir_Endian_To_Int(int nbOctet, int fin = 0, int valeur = 0)
         {
-            if(fin == nbOctet)
+            for (int i = fin; i < nbOctet; i++)
             {
-                return valeur;
+                valeur += Convert.ToInt32(myfile[offset + i] * Math.Pow(256, i));
             }
-            else
-            {
-                valeur += Convert.ToInt32(myfile[offset + fin] * Math.Pow(256, fin));
-                fin++;
-                return Convertir_Endian_To_Int(nbOctet, fin, valeur);
-            }
-
+            return valeur;
         }
 
+        /// <summary>
+        /// Convertit un entier en endian
+        /// </summary>
+        /// <param name="nombre"> Nombre à convertir en "endian" </param>
+        /// <example> Convertir_Int_To_Endian(5) </example>
         public byte[] Convertir_Int_To_Endian(int nombre)  // Récupéré sur internet
         {
             byte[] endian = new byte[4];
@@ -184,16 +185,15 @@ namespace MyBitMap
             endian[3] = (byte)(((uint)nombre >> 24) & 0xFF);
             return endian;
         }
-    
-
-        // Créer la nouvelle image
 
         /// <summary>
-        /// Effectue dans un premier temps les modications nécessaire dans le header en fonction du traitement effectué, puis remplit entièrement le nouveau tableau de byte en reprenant le header pour les 54 premiers bits, puis les valeurs des couleurs bleue, vert et rouge pour le reste du tableau.
-        /// Finit par écrire l'image, la créer puis l'afficher.
+        /// Commence par ajuster le header en fonction du traitement effectué.
+        /// Ensuite, remplit entièrement le nouveau tableau de bytes en copiant d'abord les 54 premiers bits du header, puis les valeurs de bleu, vert et rouge pour le reste du tableau.
+        /// Enfin, écrit, crée et affiche l'image.
         /// </summary>
-        /// <param name="operation"> modification à apporter dans le header selon le traitement à effectuer </param>
-        /// <param name="multiple"> agrandissement ou rétrécissement de l'image </param>
+        /// <param name="operation">Opération à effectuer sur le header en fonction du traitement.</param>
+        /// <param name="multiple">Facteur d'agrandissement ou de rétrécissement de l'image.</param>
+
         public void CreerImage(int operation, int multiple = 0)
         {
             byte[] creerFile = null; // Même principe que le tableau de byte myfile

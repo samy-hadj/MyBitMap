@@ -18,34 +18,41 @@ namespace MyBitMap
             _myImage = myImage;
         }
 
-        // * METHODE TRAITEMENT IMAGE *
-
         /// <summary>
-        /// Parcours la matrice de pixel et applique à chaque Pixel la méthode de classe permettant de créer la nuance de gris
+        /// Traitez chaque pixel de la matrice en appliquant la méthode de classe pour appliquer la nuance de gris
         /// </summary>
-        public void enGris()
+        public void grayScalePicture()
         {
-            for (int ligne = 0; ligne < _myImage.hauteur; ligne++)
+            int row = 0;
+            while (row < _myImage.hauteur)
             {
-                for (int colonne = 0; colonne < _myImage.largeur; colonne++)
+                int column = 0;
+                while (column < _myImage.largeur)
                 {
-                    _myImage.image[ligne, colonne].GrayScale();
+                    _myImage.image[row, column].GrayScale();
+                    column++;
                 }
+                row++;
             }
             _myImage.CreerImage(0); // Rien à modifier dans le header
         }
 
+
         /// <summary>
-        /// Parcours la matrice de pixel et applique à chaque Pixel la méthode de classe pour créer du noir ou blanc
+        /// Traitez chaque pixel de la matrice en appliquant la méthode de classe pour appliquer la binarisation de l'image (noir ou blanc)
         /// </summary>
-        public void NetB()
+        public void BinarizePicture()
         {
-            for (int ligne = 0; ligne < _myImage.hauteur; ligne++)
+            int row = 0;
+            while (row < _myImage.hauteur)
             {
-                for (int colonne = 0; colonne < _myImage.largeur; colonne++)
+                int column = 0;
+                while (column < _myImage.largeur)
                 {
-                    _myImage.image[ligne, colonne].BinarizeColor();
+                    _myImage.image[row, column].BinarizeColor();
+                    column++;
                 }
+                row++;
             }
             _myImage.CreerImage(0); // Rien à modifier dans le header
         }
@@ -56,31 +63,44 @@ namespace MyBitMap
         /// </summary>
         public void rotation()
         {
-            int angle = 0;
-            do
+            int angleDegree = 0;
+            bool isValidAngle = false;
+
+            while (!isValidAngle)
             {
                 Console.Write("Choisissez un angle entre 90, 180 ou 270 : ");
-                try { angle = Convert.ToInt32(Console.ReadLine()); }
-                catch { Console.Write("\nLa rotation ne peut s'effectuer qu'à 90, 180 ou 270°"); }
-            } while (angle != 90 && angle != 180 && angle != 270);
-            
-            if (angle == 90)
-            {
-                rotation90();
-            }
-            else if (angle == 180)
-            {
-                rotation90();
-                rotation90();
-            }
-            else if (angle == 270)
-            {
-                rotation90();
-                rotation90();
-                rotation90();
+                try
+                {
+                    angleDegree = Convert.ToInt32(Console.ReadLine());
+                    isValidAngle = angleDegree == 90 || angleDegree == 180 || angleDegree == 270;
+                    if (!isValidAngle)
+                    {
+                        Console.WriteLine("\nLa rotation ne peut s'effectuer qu'à 90, 180 ou 270°");
+                    }
+                }
+                catch
+                {
+                    Console.WriteLine("\nLa rotation ne peut s'effectuer qu'à 90, 180 ou 270°");
+                }
             }
 
-            if (angle == 180)
+            switch (angleDegree)
+            {
+                case 90:
+                    rotation90();
+                    break;
+                case 180:
+                    rotation90();
+                    rotation90();
+                    break;
+                case 270:
+                    rotation90();
+                    rotation90();
+                    rotation90();
+                    break;
+            }
+
+            if (angleDegree == 180)
             {
                 _myImage.CreerImage(0); // Rien à modifier dans le header
             }
@@ -90,14 +110,15 @@ namespace MyBitMap
             }
         }
 
+
         private void rotation90()
         {
             Pixel[,] imageTemporaire = new Pixel[_myImage.largeur, _myImage.hauteur];
-            for (int ligne = 0; ligne < _myImage.hauteur; ligne++)
+            for (int row = 0; row < _myImage.hauteur; row++)
             {
-                for (int colonne = 0; colonne < _myImage.largeur; colonne++)
+                for (int column = 0; column < _myImage.largeur; column++)
                 {
-                    imageTemporaire[colonne, _myImage.image.GetLength(0) - 1 - ligne] = _myImage.image[ligne, colonne];
+                    imageTemporaire[column, _myImage.image.GetLength(0) - 1 - row] = _myImage.image[row, column];
                 }
             }
             _myImage.image = imageTemporaire;
@@ -120,11 +141,11 @@ namespace MyBitMap
             } while (possible == false);
             
             Pixel[,] imageGrande = new Pixel[_myImage.hauteur * multiple, _myImage.largeur * multiple];
-            for (int ligne = 0; ligne < imageGrande.GetLength(0); ligne++)
+            for (int row = 0; row < imageGrande.GetLength(0); row++)
             {
-                for (int colonne = 0; colonne < imageGrande.GetLength(1); colonne++)
+                for (int column = 0; column < imageGrande.GetLength(1); column++)
                 {
-                    imageGrande[ligne, colonne] = _myImage.image[ligne / multiple, colonne / multiple];
+                    imageGrande[row, column] = _myImage.image[row / multiple, column / multiple];
                 }
             }
             _myImage.image = imageGrande;
@@ -225,16 +246,16 @@ namespace MyBitMap
             imageTemporaire[_myImage.hauteur - 1, 0] = imageTemporaire[_myImage.hauteur - 2, 1]; // coin inférieur gauche
             imageTemporaire[_myImage.hauteur - 1, _myImage.largeur - 1] = imageTemporaire[_myImage.hauteur - 2, _myImage.largeur - 2]; // coin inférieur droit
 
-            for (int ligne = 1; ligne < _myImage.hauteur - 1; ligne++) 
+            for (int row = 1; row < _myImage.hauteur - 1; row++) 
             {
-                imageTemporaire[ligne, 0] = imageTemporaire[ligne, 1]; // bord gauche
-                imageTemporaire[ligne, _myImage.largeur - 1] = imageTemporaire[ligne, _myImage.largeur - 2]; // bord droit
+                imageTemporaire[row, 0] = imageTemporaire[row, 1]; // bord gauche
+                imageTemporaire[row, _myImage.largeur - 1] = imageTemporaire[row, _myImage.largeur - 2]; // bord droit
             }
 
-            for (int colonne = 1; colonne < _myImage.largeur - 1; colonne++)
+            for (int column = 1; column < _myImage.largeur - 1; column++)
             {
-                imageTemporaire[0, colonne] = imageTemporaire[1, colonne]; // bord supérieur
-                imageTemporaire[_myImage.hauteur - 1, colonne] = imageTemporaire[_myImage.hauteur - 2, colonne]; // inférieur
+                imageTemporaire[0, column] = imageTemporaire[1, column]; // bord supérieur
+                imageTemporaire[_myImage.hauteur - 1, column] = imageTemporaire[_myImage.hauteur - 2, column]; // inférieur
             }
 
             _myImage.image = imageTemporaire;

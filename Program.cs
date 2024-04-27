@@ -200,11 +200,11 @@ namespace MyBitMap
             }
             else if (pictureNumber == 1)
             {
-                image.imageProcessService.enGris();
+                image.imageProcessService.grayScalePicture();
             }
             else if (pictureNumber == 2)
             {
-                image.imageProcessService.NetB();
+                image.imageProcessService.BinarizePicture();
             }
             // else if (pictureNumber == 3)
             // {
