@@ -21,7 +21,9 @@ namespace MyBitMap
                 "\n0. Testez votre fichier personnel" +
                 "\n1. Jamel" +
                 "\n2. Test" +
-                "\n3. Dessiner la fractale de Mandelbrot\n");
+                 "\n\n------------- TD5... -------------\n" +
+                "\n3. Dessiner la fractale de Mandelbrot\n"+
+                "\n4. Dessiner la steganography\n");
 
             int pictureNumber = -1;
             string filename = null;
@@ -49,6 +51,12 @@ namespace MyBitMap
                     {
                         MyImage image = new MyImage();
                         image.imageProcessService.fractale();
+                        Environment.Exit(0);
+                    }
+                    else if (pictureNumber == 4)
+                    {
+                        MyImage image = new MyImage();
+                        image.imageProcessService.steganography();
                         Environment.Exit(0);
                     }
                     else

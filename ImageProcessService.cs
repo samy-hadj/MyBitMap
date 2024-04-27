@@ -378,5 +378,54 @@ namespace MyBitMap
             _myImage.image = fractale;
             _myImage.CreateNewImage(5); // Creer l'image entierement
         }
+
+        //Coder et Décoder une image dans une image (stéganographie) 
+        public void steganography()
+        {
+            string pathImageToHide =  @"C:\Users\Samy\Desktop\projetBitmap\repoGit\MyBitMap\jamel.bmp";
+            MyImage imageToHide = new MyImage(pathImageToHide);
+
+            string pathImageBackground = @"C:\Users\Samy\Desktop\projetBitmap\repoGit\MyBitMap\test.bmp";
+            MyImage imageBackground = new MyImage(pathImageBackground);
+
+            int width = imageToHide.width;
+            int height = imageToHide.height;
+
+            Pixel[,] imageSteganography = new Pixel[width, height];
+
+            int row = 0;
+            while (row < height)
+            {
+                int column = 0;
+                while (column < width)
+                {
+                    int[] blue = Convertir_Int_ToByte(imageToHide.image[row, column].Blue);
+                    int[] green = Convertir_Int_ToByte(imageToHide.image[row, column].Green);
+                    int[] red = Convertir_Int_ToByte(imageToHide.image[row, column].Red);
+
+                    int[] blueBackground = Convertir_Int_ToByte(imageBackground.image[row, column].Blue);
+                    int[] greenBackground = Convertir_Int_ToByte(imageBackground.image[row, column].Green);
+                    int[] redBackground = Convertir_Int_ToByte(imageBackground.image[row, column].Red);
+
+                    int[] blueSteganography = new int[8];
+                    int[] greenSteganography = new int[8];
+                    int[] redSteganography = new int[8];
+
+                    for (int i = 0; i < 8; i++)
+                    {
+                        blueSteganography[i] = blueBackground[i] & 0xFE | blue[i];
+                        greenSteganography[i] = greenBackground[i] & 0xFE | green[i];
+                        redSteganography[i] = redBackground[i] & 0xFE | red[i];
+                    }
+
+                    imageSteganography[row, column] = new Pixel(Convertir_Byte_ToInt(blueSteganography), Convertir_Byte_ToInt(greenSteganography), Convertir_Byte_ToInt(redSteganography));
+                    column++;
+                }
+                row++;
+            }
+
+            _myImage.image = imageSteganography;
+            _myImage.CreateNewImage(0); // Rien à modifier dans le header
+        }
     }
 }

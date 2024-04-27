@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MyBitMap")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+48125dfe3a90c7b6de7ee39cf06df3972dce1a0d")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+24d5dfb2b9382c4f9ca3aaf18be47cf91211c58f")]
 [assembly: System.Reflection.AssemblyProductAttribute("MyBitMap")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MyBitMap")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
